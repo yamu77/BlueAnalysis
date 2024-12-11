@@ -21,7 +21,10 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
+  IconButton,
+  Popover,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
 interface Student {
   レア: string;
@@ -437,11 +440,45 @@ export function StudentTable() {
     getVisibleColumns();
   }, [isMobile, isTablet]);
 
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   if (error) return <div>{error}</div>;
   if (loading) return <div>読み込み中...</div>;
 
   return (
     <div className="student-table">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "10px",
+        }}
+      >
+        <IconButton
+          onClick={handleClick}
+          sx={{
+            backgroundColor: "white",
+            "&:hover": {
+              backgroundColor: "#f5f5f5",
+            },
+            boxShadow: open ? "none" : "0 0 5px rgba(0,0,0,0.2)",
+            width: "40px",
+            height: "40px",
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+      </div>
+
       <div
         className="table-container"
         style={{
@@ -450,6 +487,7 @@ export function StudentTable() {
           overflowY: "auto",
           maxWidth: "100vw",
           margin: "0 auto",
+          position: "relative",
         }}
       >
         <table
@@ -457,6 +495,7 @@ export function StudentTable() {
             minWidth: isMobile ? "100%" : "800px",
             maxWidth: "100%",
             position: "relative",
+            marginTop: "-40px",
           }}
         >
           <thead>
@@ -716,48 +755,63 @@ export function StudentTable() {
         </table>
       </div>
 
-      <Paper
-        className="column-visibility-control"
-        elevation={0}
-        sx={{
-          padding: isMobile ? "1rem" : "2rem",
-          margin: "1rem 0",
-          maxWidth: "100%",
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
         }}
       >
-        <Typography
-          variant="h6"
-          component="h3"
+        <Paper
+          className="column-visibility-control"
+          elevation={0}
           sx={{
-            mb: 2,
-            fontSize: isMobile ? "1rem" : "1.25rem",
+            padding: isMobile ? "1rem" : "2rem",
+            maxWidth: "90vw",
+            maxHeight: "80vh",
+            overflow: "auto",
           }}
         >
-          表示カラムの設定
-        </Typography>
-        <FormGroup
-          row={!isMobile}
-          sx={{
-            flexWrap: "wrap",
-            gap: "0.5rem",
-          }}
-        >
-          {table.getAllLeafColumns().map((column) => {
-            return (
-              <FormControlLabel
-                key={column.id}
-                control={
-                  <Checkbox
-                    checked={column.getIsVisible()}
-                    onChange={column.getToggleVisibilityHandler()}
-                  />
-                }
-                label={column.columnDef.header as string}
-              />
-            );
-          })}
-        </FormGroup>
-      </Paper>
+          <Typography
+            variant="h6"
+            component="h3"
+            sx={{
+              mb: 2,
+              fontSize: isMobile ? "1rem" : "1.25rem",
+            }}
+          >
+            表示カラムの設定
+          </Typography>
+          <FormGroup
+            row={!isMobile}
+            sx={{
+              flexWrap: "wrap",
+              gap: "0.5rem",
+            }}
+          >
+            {table.getAllLeafColumns().map((column) => {
+              return (
+                <FormControlLabel
+                  key={column.id}
+                  control={
+                    <Checkbox
+                      checked={column.getIsVisible()}
+                      onChange={column.getToggleVisibilityHandler()}
+                    />
+                  }
+                  label={column.columnDef.header as string}
+                />
+              );
+            })}
+          </FormGroup>
+        </Paper>
+      </Popover>
     </div>
   );
 }
