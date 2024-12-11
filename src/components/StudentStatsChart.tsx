@@ -27,8 +27,15 @@ type DataCount = {
   count: number;
 };
 
+interface ChartOptions {
+  implementationDateUnit?: '年' | '年月';
+}
+
 export function StudentStatsChart({ students }: Props) {
   const [selectedColumn, setSelectedColumn] = useState<keyof Student>("レア");
+  const [chartOptions, setChartOptions] = useState<ChartOptions>({
+    implementationDateUnit: '年',
+  });
 
   // 名前以外の全てのカラムを取得
   const columns = Object.keys(students[0]).filter(
@@ -37,6 +44,49 @@ export function StudentStatsChart({ students }: Props) {
 
   const getChartData = (column: keyof Student): DataCount[] => {
     const counts: { [key: string]: number } = {};
+
+    if (column === "誕生日") {
+      // 月ごとの初期化（1月から12月）
+      for (let i = 1; i <= 12; i++) {
+        counts[`${i}月`] = 0;
+      }
+
+      students.forEach((student) => {
+        const birthDate = student[column];
+        if (birthDate) {
+          const month = parseInt(birthDate.split("/")[0]);
+          counts[`${month}月`]++;
+        }
+      });
+
+      // 月順にソートして返す
+      return Array.from({ length: 12 }, (_, i) => ({
+        name: `${i + 1}月`,
+        count: counts[`${i + 1}月`],
+      }));
+    } else if (column === "実装日") {
+      students.forEach((student) => {
+        const date = student[column];
+        if (date) {
+          const [year, month] = date.split("/");
+          const key = chartOptions.implementationDateUnit === '年' 
+            ? `${year}年`
+            : `${year}年${month}月`;
+          counts[key] = (counts[key] || 0) + 1;
+        }
+      });
+
+      return Object.entries(counts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((entry1, entry2) => {
+          // 数値に変換してから比較
+          const value1 = entry1.name.replace(/[年月]/g, '');
+          const value2 = entry2.name.replace(/[年月]/g, '');
+          return parseInt(value1) - parseInt(value2);
+        });
+    }
+
+    // 誕生日以外のカラムは従来通りの処理
     students.forEach((student) => {
       const value = String(student[column]);
       counts[value] = (counts[value] || 0) + 1;
@@ -75,19 +125,37 @@ export function StudentStatsChart({ students }: Props) {
       <Typography variant="h6" gutterBottom>
         生徒データ分布
       </Typography>
-      <FormControl sx={{ mb: 2, minWidth: 200 }}>
-        <Select
-          value={selectedColumn}
-          onChange={(e) => setSelectedColumn(e.target.value as keyof Student)}
-          size="small"
-        >
-          {columns.map((column) => (
-            <MenuItem key={column} value={column}>
-              {column}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
+        <FormControl sx={{ minWidth: 200 }}>
+          <Select
+            value={selectedColumn}
+            onChange={(e) => setSelectedColumn(e.target.value as keyof Student)}
+            size="small"
+          >
+            {columns.map((column) => (
+              <MenuItem key={column} value={column}>
+                {String(column)}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* 実装日が選択されている場合のみ表示 */}
+        {selectedColumn === "実装日" && (
+          <FormControl size="small">
+            <Select
+              value={chartOptions.implementationDateUnit}
+              onChange={(e) => setChartOptions(prev => ({
+                ...prev,
+                implementationDateUnit: e.target.value as '年' | '年月'
+              }))}
+            >
+              <MenuItem value="年">年単位</MenuItem>
+              <MenuItem value="年月">年月単位</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+      </div>
 
       <div style={{ flex: 1, minHeight: 0 }}>
         {" "}

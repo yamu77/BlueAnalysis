@@ -1,0 +1,38 @@
+export interface Student {
+  レア: string;
+  名前: string;
+  武器種: string;
+  遮蔽物: string;
+  役割: string;
+  ポジション: string;
+  クラス: string;
+  学校: string;
+  攻撃: string;
+  防御: string;
+  市街: string;
+  屋外: string;
+  屋内: string;
+  射程距離: number;
+  装備1: string;
+  装備2: string;
+  装備3: string;
+  実装日: string;
+  学年: string;
+  部活: string;
+  年齢: string;
+  誕生日: string;
+  身長: string;
+  HP: string;
+  攻撃力: string;
+  治癒力: string;
+  命中値: string;
+  会心値: string;
+  安定値: string;
+  CC強化力: string;
+  会心ダメージ: string;
+  CC抵抗力: string;
+  防御力: string;
+  回避値: string;
+  防御貫通値: string | number;
+  コスト回復力: string;
+}
