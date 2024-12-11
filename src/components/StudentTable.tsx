@@ -25,6 +25,7 @@ import {
   Popover,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { StudentStatsChart } from './StudentStatsChart';
 
 interface Student {
   レア: string;
@@ -323,7 +324,7 @@ export function StudentTable() {
         size: 100,
         filterFn: "equals",
       }),
-      columnHelper.accessor("回避値", {
+      columnHelper.accessor("回��値", {
         header: "回避値",
         size: 100,
         filterFn: "equals",
@@ -456,6 +457,8 @@ export function StudentTable() {
 
   return (
     <div className="student-table">
+      <StudentStatsChart students={students} />
+      
       <div
         style={{
           display: "flex",
