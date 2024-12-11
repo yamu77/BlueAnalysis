@@ -332,6 +332,15 @@ export function StudentTable() {
           student["学年"] = "1年(推定)";
         }
       }
+
+      if (student["誕生日"]) {
+        const birthDate = student["誕生日"].match(/(\d+)月(\d+)日/);
+        if (birthDate) {
+          const month = birthDate[1].padStart(2, "0");
+          const day = birthDate[2].padStart(2, "0");
+          student["誕生日"] = `${month}/${day}`;
+        }
+      }
     });
     return data;
   };
@@ -378,7 +387,8 @@ export function StudentTable() {
         setStudents(processedData);
         setLoading(false);
       })
-      .catch((_err) => {
+      .catch((err) => {
+        console.error("データ読み込みエラー:", err);
         setError("データの読み込みに失敗しました");
         setLoading(false);
       });
