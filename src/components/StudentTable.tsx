@@ -23,8 +23,10 @@ import {
   useMediaQuery,
   IconButton,
   Popover,
+  Tooltip,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import ClearAllIcon from "@mui/icons-material/ClearAll";
 import { StudentStatsChart } from "./StudentStatsChart";
 import "./StudentTable.css";
 
@@ -204,7 +206,7 @@ export function StudentTable() {
         filterFn: "equals",
       }),
       columnHelper.accessor("装備2", {
-        header: "装備2",
+        header: "装���2",
         size: 100,
         filterFn: "equals",
       }),
@@ -453,6 +455,10 @@ export function StudentTable() {
     setAnchorEl(null);
   };
 
+  const clearAllFilters = () => {
+    table.resetColumnFilters();
+  };
+
   if (error) return <div>{error}</div>;
   if (loading) return <div>読み込み中...</div>;
 
@@ -465,20 +471,51 @@ export function StudentTable() {
     <div className="student-table">
       <div className="student-table__left-column">
         <div className="menu-button-container">
-          <IconButton
-            onClick={handleClick}
-            sx={{
-              backgroundColor: "white",
-              "&:hover": {
-                backgroundColor: "#f5f5f5",
-              },
-              boxShadow: open ? "none" : "0 0 5px rgba(0,0,0,0.2)",
-              width: "40px",
-              height: "40px",
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
+          <Tooltip title="フィルターリセット">
+            <IconButton 
+              onClick={clearAllFilters} 
+              size="small"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                backgroundColor: "white",
+                "&:hover": {
+                  backgroundColor: "#f5f5f5",
+                },
+                boxShadow: "0 0 5px rgba(0,0,0,0.2)",
+                padding: "4px 8px",
+                borderRadius: "4px",
+              }}
+            >
+              <ClearAllIcon />
+              <Typography variant="caption" sx={{ display: { xs: 'none', sm: 'block' } }}>
+                フィルターリセット
+              </Typography>
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="表示の設定">
+            <IconButton
+              onClick={handleClick}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                backgroundColor: "white",
+                "&:hover": {
+                  backgroundColor: "#f5f5f5",
+                },
+                boxShadow: open ? "none" : "0 0 5px rgba(0,0,0,0.2)",
+                padding: "4px 8px",
+                borderRadius: "4px",
+              }}
+            >
+              <MenuIcon />
+              <Typography variant="caption" sx={{ display: { xs: 'none', sm: 'block' } }}>
+                表示の設定
+              </Typography>
+            </IconButton>
+          </Tooltip>
         </div>
 
         <div className="table-container">

@@ -17,6 +17,7 @@
 .menu-button-container {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
   margin-bottom: 10px;
 }
 
@@ -32,7 +33,6 @@
   min-width: 800px;
   max-width: 100%;
   position: relative;
-  margin-top: -40px;
 }
 
 .student-table th {
@@ -40,6 +40,8 @@
   top: 0;
   background: #f5f5f5;
   z-index: 2;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .sort-header {
