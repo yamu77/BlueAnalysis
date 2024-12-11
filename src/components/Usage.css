@@ -1,0 +1,36 @@
+section{
+    text-align: left;
+    line-height: 1.6;
+}
+.usage-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.usage-container section {
+  margin-bottom: 2rem;
+}
+
+.usage-container .MuiTypography-h4 {
+  margin-bottom: 2rem;
+  color: #1976d2;
+}
+
+.usage-container .MuiTypography-h5 {
+  color: #333;
+  margin-top: 1rem;
+}
+
+.usage-container .MuiList-root {
+  padding-left: 1rem;
+}
+
+.usage-container .MuiLink-root {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.usage-container .MuiLink-root:hover {
+  text-decoration: underline;
+} 

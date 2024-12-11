@@ -90,6 +90,7 @@ export function StudentStatsChart({ students }: Props) {
 
   // 名前以外の全てのカラムを取得し、除外項目をフィルタリング
   const columns = Object.keys(students[0])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((key) => !EXCLUDED_FIELDS.includes(key as any))
     .sort() as (keyof Student)[];
 

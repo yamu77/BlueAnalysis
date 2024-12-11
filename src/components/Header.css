@@ -2,14 +2,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 0 2rem;
   background-color: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
 }
 
 .header-title {
-  margin: 0;
-  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
 }
 
 .header-nav {
@@ -24,4 +24,9 @@
 
 .nav-link:hover {
   text-decoration: underline;
+}
+
+.header-logo {
+  height: 80px;
+  width: auto;
 } 
