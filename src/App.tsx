@@ -1,12 +1,18 @@
+import { BrowserRouter as Router } from "react-router-dom";
 import { StudentTable } from "./components/StudentTable";
+import { Header } from "./components/Header";
 import "./App.css";
 
 function App() {
   return (
-    <div className="container">
-      <h1>Blue Archive データベース</h1>
-      <StudentTable />
-    </div>
+    <Router>
+      <div className="container">
+        <Header />
+        <main>
+          <StudentTable />
+        </main>
+      </div>
+    </Router>
   );
 }
 

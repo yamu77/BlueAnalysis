@@ -7,11 +7,25 @@
 .student-table__left-column {
   flex: 1 1 50%;
   min-width: 0;
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .student-table__right-column {
   flex: 1 1 50%;
   min-width: 300px;
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+}
+
+.student-table__left-column > div,.student-table__right-column >div {
+  max-height: calc(100vh - 200px);
+  padding: 0px;
 }
 
 .menu-button-container {
@@ -23,7 +37,7 @@
 
 .table-container {
   overflow-x: auto;
-  max-height: calc(100vh - 100px);
+  height: 100%;
   overflow-y: auto;
   max-width: 100%;
   position: relative;
@@ -75,6 +89,7 @@
   .student-table__left-column {
     flex: 1 1 auto;
     width: 100%;
+    height: auto;
   }
 
   .student-table__right-column {
@@ -83,5 +98,6 @@
     width: 100%;
     min-width: 0;
     margin-top: 20px;
+    height: auto;
   }
 } 

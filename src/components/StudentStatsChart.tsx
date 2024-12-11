@@ -208,8 +208,6 @@ export function StudentStatsChart({ students }: Props) {
       </div>
 
       <div style={{ flex: 1, minHeight: 0 }}>
-        {" "}
-        {/* この部分を修正 */}
         <ResponsiveContainer>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
