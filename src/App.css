@@ -1,3 +1,9 @@
+html{
+  --content-height: calc(100vh - 110px);
+}
+html *{
+  box-sizing: border-box;
+}
 #root {
   max-width: 100vw;
 
@@ -6,7 +12,9 @@
   width: 100%;
 }
 
+
 main{
+  margin-top: 15px;
   padding: 0 10px;
 }
 .logo {

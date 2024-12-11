@@ -1,13 +1,14 @@
+
 .student-table {
   display: flex;
-  gap: 20px;
+  gap: 5px;
   width: 100%;
 }
 
 .student-table__left-column {
   flex: 1 1 50%;
   min-width: 0;
-  height: calc(100vh - 200px);
+  height: var(--content-height);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -16,7 +17,7 @@
 .student-table__right-column {
   flex: 1 1 50%;
   min-width: 300px;
-  height: calc(100vh - 200px);
+  height: var(--content-height);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -24,7 +25,7 @@
 }
 
 .student-table__left-column > div,.student-table__right-column >div {
-  max-height: calc(100vh - 200px);
+  max-height: var(--content-height);
   padding: 0px;
 }
 

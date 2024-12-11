@@ -43,6 +43,24 @@ const UNIQUE_COUNT_FIELDS = [
 ] as const;
 type UniqueCountField = (typeof UNIQUE_COUNT_FIELDS)[number];
 
+// 集計から除外する項目を定義
+const EXCLUDED_FIELDS = [
+  "名前",
+  "HP",
+  "会心ダメージ",
+  "防御力",
+  "攻撃力",
+  "治癒力",
+  "CC強化力",
+  "CC抵抗力",
+  "コスト回復力",
+  "会心値",
+  "回避値",
+  "命中値",
+  "安定値",
+  "防御貫通値",
+] as const;
+
 // 生徒の重複を除外する関数
 const getUniqueStudents = (students: Student[]): Student[] => {
   const uniqueMap = new Map<string, Student>();
@@ -70,10 +88,10 @@ export function StudentStatsChart({ students }: Props) {
     implementationDateUnit: "年",
   });
 
-  // 名前以外の全てのカラムを取得
-  const columns = Object.keys(students[0]).filter(
-    (key) => key !== "名前"
-  ) as (keyof Student)[];
+  // 名前以外の全てのカラムを取得し、除外項目をフィルタリング
+  const columns = Object.keys(students[0])
+    .filter((key) => !EXCLUDED_FIELDS.includes(key as any))
+    .sort() as (keyof Student)[];
 
   const getChartData = (column: keyof Student): DataCount[] => {
     const counts: { [key: string]: number } = {};
