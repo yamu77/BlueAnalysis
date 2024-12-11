@@ -249,7 +249,7 @@ export function StudentTable() {
         filterFn: "equals",
       }),
       columnHelper.accessor("部活", {
-        header: "���活",
+        header: "部活",
         size: 150,
         filterFn: "equals",
       }),
@@ -455,6 +455,11 @@ export function StudentTable() {
 
   if (error) return <div>{error}</div>;
   if (loading) return <div>読み込み中...</div>;
+
+  // StudentTableコンポーネント内で、tableのフィルタリング後のデータを取得
+  const filteredData = table
+    .getFilteredRowModel()
+    .rows.map((row) => row.original);
 
   return (
     <div className="student-table">
@@ -725,7 +730,7 @@ export function StudentTable() {
       </div>
 
       <div className="student-table__right-column">
-        <StudentStatsChart students={students} />
+        <StudentStatsChart students={filteredData} />
       </div>
 
       <Popover
