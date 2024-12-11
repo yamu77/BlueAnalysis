@@ -25,7 +25,8 @@ import {
   Popover,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { StudentStatsChart } from './StudentStatsChart';
+import { StudentStatsChart } from "./StudentStatsChart";
+import "./StudentTable.css";
 
 interface Student {
   レア: string;
@@ -248,7 +249,7 @@ export function StudentTable() {
         filterFn: "equals",
       }),
       columnHelper.accessor("部活", {
-        header: "部活",
+        header: "���活",
         size: 150,
         filterFn: "equals",
       }),
@@ -324,7 +325,7 @@ export function StudentTable() {
         size: 100,
         filterFn: "equals",
       }),
-      columnHelper.accessor("回��値", {
+      columnHelper.accessor("回避値", {
         header: "回避値",
         size: 100,
         filterFn: "equals",
@@ -457,305 +458,274 @@ export function StudentTable() {
 
   return (
     <div className="student-table">
-      <StudentStatsChart students={students} />
-      
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: "10px",
-        }}
-      >
-        <IconButton
-          onClick={handleClick}
-          sx={{
-            backgroundColor: "white",
-            "&:hover": {
-              backgroundColor: "#f5f5f5",
-            },
-            boxShadow: open ? "none" : "0 0 5px rgba(0,0,0,0.2)",
-            width: "40px",
-            height: "40px",
-          }}
-        >
-          <MenuIcon />
-        </IconButton>
+      <div className="student-table__left-column">
+        <div className="menu-button-container">
+          <IconButton
+            onClick={handleClick}
+            sx={{
+              backgroundColor: "white",
+              "&:hover": {
+                backgroundColor: "#f5f5f5",
+              },
+              boxShadow: open ? "none" : "0 0 5px rgba(0,0,0,0.2)",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </div>
+
+        <div className="table-container">
+          <table>
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id}>
+                      <div className="sort-header">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        <span className="sort-indicator">
+                          {{
+                            asc: " 🔼",
+                            desc: " 🔽",
+                          }[header.column.getIsSorted() as string] ?? ""}
+                        </span>
+                      </div>
+                      {header.column.getCanFilter() && (
+                        <div className="filter-container">
+                          {header.column.id === "実装日" ? (
+                            <FormControl
+                              fullWidth
+                              size="small"
+                              sx={{ marginTop: "0.5rem" }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: "8px",
+                                }}
+                              >
+                                <div className="filter-row">
+                                  <Select
+                                    value={
+                                      (
+                                        header.column.getFilterValue() as DateRange
+                                      )?.startYear ?? ""
+                                    }
+                                    onChange={(e) =>
+                                      header.column.setFilterValue(
+                                        (old: DateRange) => ({
+                                          ...old,
+                                          startYear: e.target.value,
+                                        })
+                                      )
+                                    }
+                                    displayEmpty
+                                    sx={{ fontSize: "0.8rem", flex: 1 }}
+                                  >
+                                    <MenuItem value="">開始年</MenuItem>
+                                    {Array.from(
+                                      new Set(
+                                        students.map(
+                                          (student) =>
+                                            student.実装日.split("/")[0]
+                                        )
+                                      )
+                                    )
+                                      .sort()
+                                      .map((year) => (
+                                        <MenuItem key={year} value={year}>
+                                          {year}年
+                                        </MenuItem>
+                                      ))}
+                                  </Select>
+                                  <Select
+                                    value={
+                                      (
+                                        header.column.getFilterValue() as DateRange
+                                      )?.startMonth ?? ""
+                                    }
+                                    onChange={(e) =>
+                                      header.column.setFilterValue(
+                                        (old: DateRange) => ({
+                                          ...old,
+                                          startMonth: e.target.value,
+                                        })
+                                      )
+                                    }
+                                    displayEmpty
+                                    sx={{ fontSize: "0.8rem", flex: 1 }}
+                                  >
+                                    <MenuItem value="">開始月</MenuItem>
+                                    {Array.from({ length: 12 }, (_, i) => {
+                                      const month = String(i + 1).padStart(
+                                        2,
+                                        "0"
+                                      );
+                                      return (
+                                        <MenuItem key={month} value={month}>
+                                          {month}月
+                                        </MenuItem>
+                                      );
+                                    })}
+                                  </Select>
+                                </div>
+                                <div className="filter-row">
+                                  <Select
+                                    value={
+                                      (
+                                        header.column.getFilterValue() as DateRange
+                                      )?.endYear ?? ""
+                                    }
+                                    onChange={(e) =>
+                                      header.column.setFilterValue(
+                                        (old: DateRange) => ({
+                                          ...old,
+                                          endYear: e.target.value,
+                                        })
+                                      )
+                                    }
+                                    displayEmpty
+                                    sx={{ fontSize: "0.8rem", flex: 1 }}
+                                  >
+                                    <MenuItem value="">終了年</MenuItem>
+                                    {Array.from(
+                                      new Set(
+                                        students.map(
+                                          (student) =>
+                                            student.実装日.split("/")[0]
+                                        )
+                                      )
+                                    )
+                                      .sort()
+                                      .map((year) => (
+                                        <MenuItem key={year} value={year}>
+                                          {year}年
+                                        </MenuItem>
+                                      ))}
+                                  </Select>
+                                  <Select
+                                    value={
+                                      (
+                                        header.column.getFilterValue() as DateRange
+                                      )?.endMonth ?? ""
+                                    }
+                                    onChange={(e) =>
+                                      header.column.setFilterValue(
+                                        (old: DateRange) => ({
+                                          ...old,
+                                          endMonth: e.target.value,
+                                        })
+                                      )
+                                    }
+                                    displayEmpty
+                                    sx={{ fontSize: "0.8rem", flex: 1 }}
+                                  >
+                                    <MenuItem value="">終了月</MenuItem>
+                                    {Array.from({ length: 12 }, (_, i) => {
+                                      const month = String(i + 1).padStart(
+                                        2,
+                                        "0"
+                                      );
+                                      return (
+                                        <MenuItem key={month} value={month}>
+                                          {month}月
+                                        </MenuItem>
+                                      );
+                                    })}
+                                  </Select>
+                                </div>
+                              </div>
+                            </FormControl>
+                          ) : header.column.id === "誕生日" ? (
+                            <FormControl
+                              fullWidth
+                              size="small"
+                              sx={{ marginTop: "0.5rem" }}
+                            >
+                              <Select
+                                value={
+                                  (header.column.getFilterValue() as string) ??
+                                  ""
+                                }
+                                onChange={(e) =>
+                                  header.column.setFilterValue(e.target.value)
+                                }
+                                displayEmpty
+                                sx={{ fontSize: "0.8rem" }}
+                              >
+                                <MenuItem value="">すべての月</MenuItem>
+                                {Array.from({ length: 12 }, (_, i) => {
+                                  const month = String(i + 1).padStart(2, "0");
+                                  return (
+                                    <MenuItem key={month} value={month}>
+                                      {month}月
+                                    </MenuItem>
+                                  );
+                                })}
+                              </Select>
+                            </FormControl>
+                          ) : (
+                            <FormControl
+                              fullWidth
+                              size="small"
+                              sx={{ marginTop: "0.5rem" }}
+                            >
+                              <Select
+                                value={
+                                  (header.column.getFilterValue() as string) ??
+                                  ""
+                                }
+                                onChange={(e) =>
+                                  header.column.setFilterValue(e.target.value)
+                                }
+                                displayEmpty
+                                sx={{ fontSize: "0.8rem" }}
+                              >
+                                <MenuItem value="">すべて</MenuItem>
+                                {getUniqueValues(
+                                  students,
+                                  header.column.id as keyof Student
+                                ).map((value) => (
+                                  <MenuItem key={value} value={value}>
+                                    {value}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          )}
+                        </div>
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id} data-rarity={row.original.レア}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div
-        className="table-container"
-        style={{
-          overflowX: "auto",
-          maxHeight: "calc(100vh - 300px)",
-          overflowY: "auto",
-          maxWidth: "100vw",
-          margin: "0 auto",
-          position: "relative",
-        }}
-      >
-        <table
-          style={{
-            minWidth: isMobile ? "100%" : "800px",
-            maxWidth: "100%",
-            position: "relative",
-            marginTop: "-40px",
-          }}
-        >
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    style={{
-                      position: "sticky",
-                      top: 0,
-                      background: "#f5f5f5",
-                      zIndex: 2,
-                    }}
-                  >
-                    <div
-                      onClick={header.column.getToggleSortingHandler()}
-                      style={{
-                        cursor: "pointer",
-                        userSelect: "none", // テキスト選択を防止
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                      }}
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                      <span style={{ fontSize: "0.8rem" }}>
-                        {{
-                          asc: " 🔼",
-                          desc: " 🔽",
-                        }[header.column.getIsSorted() as string] ?? ""}
-                      </span>
-                    </div>
-                    {header.column.getCanFilter() && (
-                      <div>
-                        {header.column.id === "実装日" ? (
-                          <FormControl
-                            fullWidth
-                            size="small"
-                            sx={{ marginTop: "0.5rem" }}
-                          >
-                            <div
-                              style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "8px",
-                              }}
-                            >
-                              <div style={{ display: "flex", gap: "8px" }}>
-                                <Select
-                                  value={
-                                    (
-                                      header.column.getFilterValue() as DateRange
-                                    )?.startYear ?? ""
-                                  }
-                                  onChange={(e) =>
-                                    header.column.setFilterValue(
-                                      (old: DateRange) => ({
-                                        ...old,
-                                        startYear: e.target.value,
-                                      })
-                                    )
-                                  }
-                                  displayEmpty
-                                  sx={{ fontSize: "0.8rem", flex: 1 }}
-                                >
-                                  <MenuItem value="">開始年</MenuItem>
-                                  {Array.from(
-                                    new Set(
-                                      students.map(
-                                        (student) =>
-                                          student.実装日.split("/")[0]
-                                      )
-                                    )
-                                  )
-                                    .sort()
-                                    .map((year) => (
-                                      <MenuItem key={year} value={year}>
-                                        {year}年
-                                      </MenuItem>
-                                    ))}
-                                </Select>
-                                <Select
-                                  value={
-                                    (
-                                      header.column.getFilterValue() as DateRange
-                                    )?.startMonth ?? ""
-                                  }
-                                  onChange={(e) =>
-                                    header.column.setFilterValue(
-                                      (old: DateRange) => ({
-                                        ...old,
-                                        startMonth: e.target.value,
-                                      })
-                                    )
-                                  }
-                                  displayEmpty
-                                  sx={{ fontSize: "0.8rem", flex: 1 }}
-                                >
-                                  <MenuItem value="">開始月</MenuItem>
-                                  {Array.from({ length: 12 }, (_, i) => {
-                                    const month = String(i + 1).padStart(
-                                      2,
-                                      "0"
-                                    );
-                                    return (
-                                      <MenuItem key={month} value={month}>
-                                        {month}月
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </Select>
-                              </div>
-                              <div style={{ display: "flex", gap: "8px" }}>
-                                <Select
-                                  value={
-                                    (
-                                      header.column.getFilterValue() as DateRange
-                                    )?.endYear ?? ""
-                                  }
-                                  onChange={(e) =>
-                                    header.column.setFilterValue(
-                                      (old: DateRange) => ({
-                                        ...old,
-                                        endYear: e.target.value,
-                                      })
-                                    )
-                                  }
-                                  displayEmpty
-                                  sx={{ fontSize: "0.8rem", flex: 1 }}
-                                >
-                                  <MenuItem value="">終了年</MenuItem>
-                                  {Array.from(
-                                    new Set(
-                                      students.map(
-                                        (student) =>
-                                          student.実装日.split("/")[0]
-                                      )
-                                    )
-                                  )
-                                    .sort()
-                                    .map((year) => (
-                                      <MenuItem key={year} value={year}>
-                                        {year}年
-                                      </MenuItem>
-                                    ))}
-                                </Select>
-                                <Select
-                                  value={
-                                    (
-                                      header.column.getFilterValue() as DateRange
-                                    )?.endMonth ?? ""
-                                  }
-                                  onChange={(e) =>
-                                    header.column.setFilterValue(
-                                      (old: DateRange) => ({
-                                        ...old,
-                                        endMonth: e.target.value,
-                                      })
-                                    )
-                                  }
-                                  displayEmpty
-                                  sx={{ fontSize: "0.8rem", flex: 1 }}
-                                >
-                                  <MenuItem value="">終了月</MenuItem>
-                                  {Array.from({ length: 12 }, (_, i) => {
-                                    const month = String(i + 1).padStart(
-                                      2,
-                                      "0"
-                                    );
-                                    return (
-                                      <MenuItem key={month} value={month}>
-                                        {month}月
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </Select>
-                              </div>
-                            </div>
-                          </FormControl>
-                        ) : header.column.id === "誕生日" ? (
-                          <FormControl
-                            fullWidth
-                            size="small"
-                            sx={{ marginTop: "0.5rem" }}
-                          >
-                            <Select
-                              value={
-                                (header.column.getFilterValue() as string) ?? ""
-                              }
-                              onChange={(e) =>
-                                header.column.setFilterValue(e.target.value)
-                              }
-                              displayEmpty
-                              sx={{ fontSize: "0.8rem" }}
-                            >
-                              <MenuItem value="">すべての月</MenuItem>
-                              {Array.from({ length: 12 }, (_, i) => {
-                                const month = String(i + 1).padStart(2, "0");
-                                return (
-                                  <MenuItem key={month} value={month}>
-                                    {month}月
-                                  </MenuItem>
-                                );
-                              })}
-                            </Select>
-                          </FormControl>
-                        ) : (
-                          <FormControl
-                            fullWidth
-                            size="small"
-                            sx={{ marginTop: "0.5rem" }}
-                          >
-                            <Select
-                              value={
-                                (header.column.getFilterValue() as string) ?? ""
-                              }
-                              onChange={(e) =>
-                                header.column.setFilterValue(e.target.value)
-                              }
-                              displayEmpty
-                              sx={{ fontSize: "0.8rem" }}
-                            >
-                              <MenuItem value="">すべて</MenuItem>
-                              {getUniqueValues(
-                                students,
-                                header.column.id as keyof Student
-                              ).map((value) => (
-                                <MenuItem key={value} value={value}>
-                                  {value}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        )}
-                      </div>
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} data-rarity={row.original.レア}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="student-table__right-column">
+        <StudentStatsChart students={students} />
       </div>
 
       <Popover

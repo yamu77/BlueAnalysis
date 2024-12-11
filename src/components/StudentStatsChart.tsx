@@ -64,7 +64,14 @@ export function StudentStatsChart({ students }: Props) {
   ];
 
   return (
-    <Paper sx={{ p: 2, mb: 2 }}>
+    <Paper
+      sx={{
+        p: 2,
+        height: "calc(100vh - 100px)", // テーブルと同じ高さに
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Typography variant="h6" gutterBottom>
         生徒データ分布
       </Typography>
@@ -82,7 +89,9 @@ export function StudentStatsChart({ students }: Props) {
         </Select>
       </FormControl>
 
-      <div style={{ width: "100%", height: 400 }}>
+      <div style={{ flex: 1, minHeight: 0 }}>
+        {" "}
+        {/* この部分を修正 */}
         <ResponsiveContainer>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
