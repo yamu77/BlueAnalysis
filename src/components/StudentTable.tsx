@@ -206,7 +206,7 @@ export function StudentTable() {
         filterFn: "equals",
       }),
       columnHelper.accessor("装備2", {
-        header: "装���2",
+        header: "装備2",
         size: 100,
         filterFn: "equals",
       }),
@@ -275,7 +275,21 @@ export function StudentTable() {
       columnHelper.accessor("身長", {
         header: "身長",
         size: 80,
-        filterFn: "equals",
+        filterFn: (row, _columnId, filterValue) => {
+          if (!filterValue) return true;
+          if (filterValue === "unknown") {
+            const height = parseInt(row.getValue("身長"));
+            return isNaN(height);
+          }
+          const height = parseInt(row.getValue("身長"));
+          const filterHeight = parseInt(filterValue as string);
+          if (isNaN(height)) return false;
+
+          // 5cm刻みの範囲内かチェック
+          const lowerBound = filterHeight;
+          const upperBound = filterHeight + 4;
+          return height >= lowerBound && height <= upperBound;
+        },
       }),
       columnHelper.accessor("HP", {
         header: "HP",
@@ -472,13 +486,13 @@ export function StudentTable() {
       <div className="student-table__left-column">
         <div className="menu-button-container">
           <Tooltip title="フィルターリセット">
-            <IconButton 
-              onClick={clearAllFilters} 
+            <IconButton
+              onClick={clearAllFilters}
               size="small"
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
                 backgroundColor: "white",
                 "&:hover": {
                   backgroundColor: "#f5f5f5",
@@ -489,7 +503,10 @@ export function StudentTable() {
               }}
             >
               <ClearAllIcon />
-              <Typography variant="caption" sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <Typography
+                variant="caption"
+                sx={{ display: { xs: "none", sm: "block" } }}
+              >
                 フィルターリセット
               </Typography>
             </IconButton>
@@ -498,9 +515,9 @@ export function StudentTable() {
             <IconButton
               onClick={handleClick}
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
                 backgroundColor: "white",
                 "&:hover": {
                   backgroundColor: "#f5f5f5",
@@ -511,7 +528,10 @@ export function StudentTable() {
               }}
             >
               <MenuIcon />
-              <Typography variant="caption" sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <Typography
+                variant="caption"
+                sx={{ display: { xs: "none", sm: "block" } }}
+              >
                 表示の設定
               </Typography>
             </IconButton>
@@ -710,6 +730,54 @@ export function StudentTable() {
                                     </MenuItem>
                                   );
                                 })}
+                              </Select>
+                            </FormControl>
+                          ) : header.column.id === "身長" ? (
+                            <FormControl
+                              fullWidth
+                              size="small"
+                              sx={{ marginTop: "0.5rem" }}
+                            >
+                              <Select
+                                value={header.column.getFilterValue() ?? ""}
+                                onChange={(e) =>
+                                  header.column.setFilterValue(e.target.value)
+                                }
+                                displayEmpty
+                                sx={{ fontSize: "0.8rem" }}
+                              >
+                                <MenuItem value="">すべて</MenuItem>
+                                {(() => {
+                                  const heights = students
+                                    .map((s) => parseInt(s.身長))
+                                    .filter((h) => !isNaN(h));
+
+                                  const minHeight =
+                                    Math.floor(Math.min(...heights) / 5) * 5;
+                                  const maxHeight =
+                                    Math.ceil(Math.max(...heights) / 5) * 5;
+
+                                  const options = [];
+                                  // 不明カテゴリを追加
+                                  options.push(
+                                    <MenuItem key="unknown" value="unknown">
+                                      不明
+                                    </MenuItem>
+                                  );
+                                  // 身長範囲のオプションを追加
+                                  for (
+                                    let h = minHeight;
+                                    h <= maxHeight;
+                                    h += 5
+                                  ) {
+                                    options.push(
+                                      <MenuItem key={h} value={h}>
+                                        {`${h}-${h + 4}cm`}
+                                      </MenuItem>
+                                    );
+                                  }
+                                  return options;
+                                })()}
                               </Select>
                             </FormControl>
                           ) : (

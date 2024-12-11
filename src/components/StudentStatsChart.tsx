@@ -61,7 +61,7 @@ const EXCLUDED_FIELDS = [
   "防御貫通値",
 ] as const;
 
-// 生徒の重複を除外する関数
+// 生徒の重複を除外する���数
 const getUniqueStudents = (students: Student[]): Student[] => {
   const uniqueMap = new Map<string, Student>();
 
@@ -103,7 +103,27 @@ export function StudentStatsChart({ students }: Props) {
       ? getUniqueStudents(students)
       : students;
 
-    if (column === "誕生日") {
+    if (column === "身長") {
+      // 身長の場合、5cm刻みでグループ化
+      targetStudents.forEach((student) => {
+        const height = parseInt(student[column]);
+        if (!isNaN(height)) {
+          // 5cm刻みの下限値を計算（例：163cmなら160）
+          const lowerBound = Math.floor(height / 5) * 5;
+          const key = `${lowerBound}-${lowerBound + 4}cm`;
+          counts[key] = (counts[key] || 0) + 1;
+        }
+      });
+
+      // 身長順にソート
+      return Object.entries(counts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => {
+          const heightA = parseInt(a.name);
+          const heightB = parseInt(b.name);
+          return heightA - heightB;
+        });
+    } else if (column === "誕生日") {
       // 月ごとの初期化（1月から12月）
       for (let i = 1; i <= 12; i++) {
         counts[`${i}月`] = 0;
