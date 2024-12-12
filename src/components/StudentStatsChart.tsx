@@ -61,7 +61,7 @@ const EXCLUDED_FIELDS = [
   "防御貫通値",
 ] as const;
 
-// 生徒の重複を除外する���数
+// 生徒の重複を除外する数
 const getUniqueStudents = (students: Student[]): Student[] => {
   const uniqueMap = new Map<string, Student>();
 
@@ -213,7 +213,7 @@ export function StudentStatsChart({ students }: Props) {
           marginBottom: "1rem",
         }}
       >
-        <FormControl sx={{ minWidth: 200 }}>
+        <FormControl sx={{ minWidth: 140, marginLeft: "10px" }}>
           <Select
             value={selectedColumn}
             onChange={(e) => setSelectedColumn(e.target.value as keyof Student)}
@@ -253,9 +253,9 @@ export function StudentStatsChart({ students }: Props) {
             <XAxis
               dataKey="name"
               interval={0}
-              angle={45}
-              textAnchor="start"
-              height={100}
+              textAnchor="left"
+              height={120}
+              angle={90}
             />
             <YAxis />
             <Tooltip />
