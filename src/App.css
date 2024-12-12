@@ -297,4 +297,10 @@ th .MuiSelect-select {
   .student-table {
     padding: 0.5rem;
   }
+  .header{
+    padding: 0 5px;
+  }
+  .header-logo{
+    height: 50px;
+  }
 }
