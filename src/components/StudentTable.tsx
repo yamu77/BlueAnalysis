@@ -573,134 +573,142 @@ export function StudentTable() {
                                 }}
                               >
                                 <div className="filter-row">
-                                  <Select
-                                    value={
-                                      (
-                                        header.column.getFilterValue() as DateRange
-                                      )?.startYear ?? ""
-                                    }
-                                    onChange={(e) =>
-                                      header.column.setFilterValue(
-                                        (old: DateRange) => ({
-                                          ...old,
-                                          startYear: e.target.value,
-                                        })
-                                      )
-                                    }
-                                    displayEmpty
-                                    sx={{ fontSize: "0.8rem", flex: 1 }}
-                                  >
-                                    <MenuItem value="">開始年</MenuItem>
-                                    {Array.from(
-                                      new Set(
-                                        students.map(
-                                          (student) =>
-                                            student.実装日.split("/")[0]
+                                  <FormControl sx={{ flex: 1 }}>
+                                    <Select
+                                      value={
+                                        (
+                                          header.column.getFilterValue() as DateRange
+                                        )?.startYear ?? ""
+                                      }
+                                      onChange={(e) =>
+                                        header.column.setFilterValue(
+                                          (old: DateRange) => ({
+                                            ...old,
+                                            startYear: e.target.value,
+                                          })
+                                        )
+                                      }
+                                      displayEmpty
+                                      sx={{ fontSize: "0.8rem" }}
+                                    >
+                                      <MenuItem value="">開始年</MenuItem>
+                                      {Array.from(
+                                        new Set(
+                                          students.map(
+                                            (student) =>
+                                              student.実装日.split("/")[0]
+                                          )
                                         )
                                       )
-                                    )
-                                      .sort()
-                                      .map((year) => (
-                                        <MenuItem key={year} value={year}>
-                                          {year}年
-                                        </MenuItem>
-                                      ))}
-                                  </Select>
-                                  <Select
-                                    value={
-                                      (
-                                        header.column.getFilterValue() as DateRange
-                                      )?.startMonth ?? ""
-                                    }
-                                    onChange={(e) =>
-                                      header.column.setFilterValue(
-                                        (old: DateRange) => ({
-                                          ...old,
-                                          startMonth: e.target.value,
-                                        })
-                                      )
-                                    }
-                                    displayEmpty
-                                    sx={{ fontSize: "0.8rem", flex: 1 }}
-                                  >
-                                    <MenuItem value="">開始月</MenuItem>
-                                    {Array.from({ length: 12 }, (_, i) => {
-                                      const month = String(i + 1).padStart(
-                                        2,
-                                        "0"
-                                      );
-                                      return (
-                                        <MenuItem key={month} value={month}>
-                                          {month}月
-                                        </MenuItem>
-                                      );
-                                    })}
-                                  </Select>
+                                        .sort()
+                                        .map((year) => (
+                                          <MenuItem key={year} value={year}>
+                                            {year}年
+                                          </MenuItem>
+                                        ))}
+                                    </Select>
+                                  </FormControl>
+                                  <FormControl sx={{ flex: 1 }}>
+                                    <Select
+                                      value={
+                                        (
+                                          header.column.getFilterValue() as DateRange
+                                        )?.startMonth ?? ""
+                                      }
+                                      onChange={(e) =>
+                                        header.column.setFilterValue(
+                                          (old: DateRange) => ({
+                                            ...old,
+                                            startMonth: e.target.value,
+                                          })
+                                        )
+                                      }
+                                      displayEmpty
+                                      sx={{ fontSize: "0.8rem" }}
+                                    >
+                                      <MenuItem value="">開始月</MenuItem>
+                                      {Array.from({ length: 12 }, (_, i) => {
+                                        const month = String(i + 1).padStart(
+                                          2,
+                                          "0"
+                                        );
+                                        return (
+                                          <MenuItem key={month} value={month}>
+                                            {month}月
+                                          </MenuItem>
+                                        );
+                                      })}
+                                    </Select>
+                                  </FormControl>
                                 </div>
                                 <div className="filter-row">
-                                  <Select
-                                    value={
-                                      (
-                                        header.column.getFilterValue() as DateRange
-                                      )?.endYear ?? ""
-                                    }
-                                    onChange={(e) =>
-                                      header.column.setFilterValue(
-                                        (old: DateRange) => ({
-                                          ...old,
-                                          endYear: e.target.value,
-                                        })
-                                      )
-                                    }
-                                    displayEmpty
-                                    sx={{ fontSize: "0.8rem", flex: 1 }}
-                                  >
-                                    <MenuItem value="">終了年</MenuItem>
-                                    {Array.from(
-                                      new Set(
-                                        students.map(
-                                          (student) =>
-                                            student.実装日.split("/")[0]
+                                  <FormControl sx={{ flex: 1 }}>
+                                    <Select
+                                      value={
+                                        (
+                                          header.column.getFilterValue() as DateRange
+                                        )?.endYear ?? ""
+                                      }
+                                      onChange={(e) =>
+                                        header.column.setFilterValue(
+                                          (old: DateRange) => ({
+                                            ...old,
+                                            endYear: e.target.value,
+                                          })
+                                        )
+                                      }
+                                      displayEmpty
+                                      sx={{ fontSize: "0.8rem" }}
+                                    >
+                                      <MenuItem value="">終了年</MenuItem>
+                                      {Array.from(
+                                        new Set(
+                                          students.map(
+                                            (student) =>
+                                              student.実装日.split("/")[0]
+                                          )
                                         )
                                       )
-                                    )
-                                      .sort()
-                                      .map((year) => (
-                                        <MenuItem key={year} value={year}>
-                                          {year}年
-                                        </MenuItem>
-                                      ))}
-                                  </Select>
-                                  <Select
-                                    value={
-                                      (
-                                        header.column.getFilterValue() as DateRange
-                                      )?.endMonth ?? ""
-                                    }
-                                    onChange={(e) =>
-                                      header.column.setFilterValue(
-                                        (old: DateRange) => ({
-                                          ...old,
-                                          endMonth: e.target.value,
-                                        })
-                                      )
-                                    }
-                                    displayEmpty
-                                    sx={{ fontSize: "0.8rem", flex: 1 }}
-                                  >
-                                    <MenuItem value="">終了月</MenuItem>
-                                    {Array.from({ length: 12 }, (_, i) => {
-                                      const month = String(i + 1).padStart(
-                                        2,
-                                        "0"
-                                      );
-                                      return (
-                                        <MenuItem key={month} value={month}>
-                                          {month}月
-                                        </MenuItem>
-                                      );
-                                    })}
-                                  </Select>
+                                        .sort()
+                                        .map((year) => (
+                                          <MenuItem key={year} value={year}>
+                                            {year}年
+                                          </MenuItem>
+                                        ))}
+                                    </Select>
+                                  </FormControl>
+                                  <FormControl sx={{ flex: 1 }}>
+                                    <Select
+                                      value={
+                                        (
+                                          header.column.getFilterValue() as DateRange
+                                        )?.endMonth ?? ""
+                                      }
+                                      onChange={(e) =>
+                                        header.column.setFilterValue(
+                                          (old: DateRange) => ({
+                                            ...old,
+                                            endMonth: e.target.value,
+                                          })
+                                        )
+                                      }
+                                      displayEmpty
+                                      sx={{ fontSize: "0.8rem" }}
+                                    >
+                                      <MenuItem value="">終了月</MenuItem>
+                                      {Array.from({ length: 12 }, (_, i) => {
+                                        const month = String(i + 1).padStart(
+                                          2,
+                                          "0"
+                                        );
+                                        return (
+                                          <MenuItem key={month} value={month}>
+                                            {month}月
+                                          </MenuItem>
+                                        );
+                                      })}
+                                    </Select>
+                                  </FormControl>
                                 </div>
                               </div>
                             </FormControl>
