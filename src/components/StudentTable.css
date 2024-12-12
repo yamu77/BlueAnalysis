@@ -15,7 +15,7 @@
 }
 
 .student-table__right-column {
-  flex: 1;
+  flex: 1 1 50%;
   min-width: 300px;
   transition: width 0.3s ease;
   height: var(--content-height);
@@ -105,10 +105,20 @@
 
 .student-table img {
   vertical-align: middle;
-} 
+}
+.student-table__right-column > div>*{
+  position: sticky;
+  left: 0;
+}
+.student-table__right-column > div>*:not(:last-child){
+  max-width: calc((100vw - 57px)/2);
+  overflow-x: hidden;
+}
+
 @media (max-width: 600px) {
   .student-table {
     flex-direction: column;
+    padding: 0;
   }
 
   .student-table__left-column {
@@ -121,12 +131,18 @@
     overflow-x: auto;
   }
   .student-table__right-column > div>*{
-    display: block;
     position: sticky;
     left: 0;
   }
   .student-table__right-column > div>div:nth-child(3){
     overflow-x: auto;
+  }
+  .student-table__right-column > div>*:not(:last-child){
+    max-width: calc(100vw - 50px);
+    overflow-x: hidden;
+  }
+  .recharts-wrapper{
+    overflow: hidden;
   }
 }
 

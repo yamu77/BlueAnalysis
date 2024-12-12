@@ -293,10 +293,6 @@ th .MuiSelect-select {
   .student-table th div[role="button"] {
     padding: 0.25rem;
   }
-
-  .student-table {
-    padding: 0.5rem;
-  }
   .header{
     padding: 0 5px;
   }

@@ -197,9 +197,17 @@ export function StudentStatsChart({ students }: Props) {
     <Paper
       sx={{
         p: 2,
-        height: "calc(100vh - 100px)", // テーブルと同じ高さに
+        height: "calc(100vh - 100px)",
         display: "flex",
         flexDirection: "column",
+        width: {
+          xs: selectedColumn === "部活" ? "800px" : "auto",
+          sm: "auto",
+        },
+        minWidth: {
+          xs: "0",
+          sm: selectedColumn === "部活" ? "800px" : "0",
+        },
       }}
     >
       <Typography variant="h6" gutterBottom>
