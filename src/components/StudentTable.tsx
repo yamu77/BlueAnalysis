@@ -182,18 +182,42 @@ export function StudentTable() {
       }),
       columnHelper.accessor("市街", {
         header: "市街",
-        size: 80,
+        size: 60,
         filterFn: "equals",
+        cell: (info) => (
+          <img
+            src={`/icons/face_${info.getValue().charAt(0)}.png`}
+            alt={info.getValue()}
+            title={info.getValue()}
+            style={{ width: "24px", height: "24px" }}
+          />
+        ),
       }),
       columnHelper.accessor("屋外", {
         header: "屋外",
-        size: 80,
+        size: 60,
         filterFn: "equals",
+        cell: (info) => (
+          <img
+            src={`/icons/face_${info.getValue().charAt(0)}.png`}
+            alt={info.getValue()}
+            title={info.getValue()}
+            style={{ width: "24px", height: "24px" }}
+          />
+        ),
       }),
       columnHelper.accessor("屋内", {
         header: "屋内",
-        size: 80,
+        size: 60,
         filterFn: "equals",
+        cell: (info) => (
+          <img
+            src={`/icons/face_${info.getValue().charAt(0)}.png`}
+            alt={info.getValue()}
+            title={info.getValue()}
+            style={{ width: "24px", height: "24px" }}
+          />
+        ),
       }),
       columnHelper.accessor("射程距離", {
         header: "射程距離",
@@ -378,30 +402,6 @@ export function StudentTable() {
 
   // データ加工用の関数
   const processStudentData = (data: Student[]): Student[] => {
-    data.forEach((student) => {
-      const matches = student["学年"].match(/\d+/);
-      if (matches) {
-        student["学年"] = `${matches[0]}年`;
-      } else {
-        const old = student["年齢"].replace("歳", "");
-        if (Number(old) >= 18) {
-          student["学年"] = "3年(推定)";
-        } else if (Number(old) >= 17) {
-          student["学年"] = "2年(推定)";
-        } else if (Number(old) <= 16) {
-          student["学年"] = "1年(推定)";
-        }
-      }
-
-      if (student["誕生日"]) {
-        const birthDate = student["誕生日"].match(/(\d+)月(\d+)日/);
-        if (birthDate) {
-          const month = birthDate[1].padStart(2, "0");
-          const day = birthDate[2].padStart(2, "0");
-          student["誕生日"] = `${month}/${day}`;
-        }
-      }
-    });
     return data;
   };
 
