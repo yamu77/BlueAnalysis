@@ -25,6 +25,12 @@
     --border-light: #333333;
     --table-shadow: rgba(0,0,0,0.3);
     --scrollbar-color: rgba(255, 255, 255, 0.2);
+    --content-height: 50svh;
+  }
+}
+@media (max-width: 600px) {
+  :root{
+    --content-height: 50svh;
   }
 }
 
@@ -267,7 +273,7 @@ th .MuiSelect-select {
 
 @media (max-width: 600px) {
   #root {
-    padding: 1rem;
+    padding: 0;
   }
 
   .student-table th,

@@ -133,7 +133,7 @@ export function StudentTable() {
     () => [
       columnHelper.accessor("レア", {
         header: "レア度",
-        size: 80,
+        size: 50,
         filterFn: "equals",
       }),
       columnHelper.accessor("名前", {
@@ -142,12 +142,12 @@ export function StudentTable() {
       }),
       columnHelper.accessor("武器種", {
         header: "武器種",
-        size: 80,
+        size: 50,
         filterFn: "equals",
       }),
       columnHelper.accessor("遮蔽物", {
         header: "遮蔽物",
-        size: 80,
+        size: 50,
         filterFn: "equals",
       }),
       columnHelper.accessor("役割", {
