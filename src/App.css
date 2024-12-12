@@ -1,6 +1,33 @@
-html{
+/* カラーテーマの定義 */
+:root {
   --content-height: calc(100vh - 110px);
+  --background-primary: #ffffff;
+  --background-secondary: #f4f4f4;
+  --background-hover: #f8f8f8;
+  --text-primary: #333;
+  --text-secondary: #888;
+  --border-color: #ddd;
+  --border-light: #eee;
+  --table-shadow: rgba(0,0,0,0.1);
+  --scrollbar-color: rgba(0, 0, 0, 0.2);
+  --content-height: calc(100vh - 130px);
 }
+
+/* ダークモードのカラーテーマ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-primary: #1a1a1a;
+    --background-secondary: #2d2d2d;
+    --background-hover: #333333;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border-color: #404040;
+    --border-light: #333333;
+    --table-shadow: rgba(0,0,0,0.3);
+    --scrollbar-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
 html *{
   box-sizing: border-box;
 }
@@ -10,6 +37,8 @@ html *{
   text-align: center;
   overflow-x: hidden;
   width: 100%;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
 }
 
 
@@ -54,6 +83,7 @@ main{
 }
 
 .container {
+  height: 100svh;
   margin: 0;
   padding: 0;
 }
@@ -76,18 +106,18 @@ h1 {
   position: sticky;
   left: 0;
   z-index: 2;
-  background: white;
+  background: var(--background-primary);
 }
 
 .table-container {
-  background: white;
+  background: var(--background-primary);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px var(--table-shadow);
   margin-bottom: 2rem;
   max-width: 100%;
   width: 100%;
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-color: var(--scrollbar-color) transparent;
 }
 
 .table-container::-webkit-scrollbar {
@@ -100,7 +130,7 @@ h1 {
 }
 
 .table-container::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--scrollbar-color);
   border-radius: 4px;
 }
 
@@ -119,13 +149,14 @@ thead {
 }
 
 th {
-  background: #f4f4f4;
+  background: var(--background-secondary);
   padding: 16px 0.75rem;
   text-align: left;
   font-weight: 600;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid var(--border-color);
   white-space: nowrap;
   min-width: 120px;
+  color: var(--text-primary);
 }
 
 /* フィルター入力欄のスタイル */
@@ -140,29 +171,29 @@ th .MuiInput-root input {
 
 td {
   padding: 0.75rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-light);
   white-space: nowrap;
 }
 
 tr:hover td {
-  background: #f8f8f8;
+  background: var(--background-hover);
 }
 
 /* レア度による行の色分け */
 tr[data-rarity="★3"] td {
-  background-color: rgba(255, 215, 0, 0.05);
+  background-color: rgba(255, 215, 0, 0.03);
 }
 
 tr[data-rarity="★2"] td {
-  background-color: rgba(192, 192, 192, 0.05);
+  background-color: rgba(192, 192, 192, 0.03);
 }
 
 tr[data-rarity="★1"] td {
-  background-color: rgba(205, 127, 50, 0.05);
+  background-color: rgba(205, 127, 50, 0.03);
 }
 
 tr:hover td {
-  background-color: rgba(0, 0, 0, 0.05) !important;
+  background-color: var(--background-hover) !important;
 }
 
 /* セレクトボックスのスタイル */
