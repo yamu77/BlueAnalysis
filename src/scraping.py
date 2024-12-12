@@ -1,3 +1,4 @@
+import re
 import time
 import urllib.parse
 from io import StringIO
@@ -111,6 +112,21 @@ def get_student_profile_for_playwright(url, switch=False) -> dict:
         return profile, table
 
 
+def convert_grade(grade: str, age: str):
+    num_match = re.search(r"(\d+)", grade)
+    if num_match:
+        return f"{num_match.group(1)}年"
+    else:
+        if int(age.replace("歳", "")) >= 18:
+            return "3年(推定)"
+        elif int(age.replace("歳", "")) >= 17:
+            return "2年(推定)"
+        elif int(age.replace("歳", "")) <= 16:
+            return "1年(推定)"
+        else:
+            return grade
+
+
 def get_student_profile(name: str, switch=False) -> pd.DataFrame:
     # URLを指定
     url = f"https://bluearchive.wikiru.jp/?{name}"
@@ -184,13 +200,13 @@ def get_student_profile(name: str, switch=False) -> pd.DataFrame:
 
     # HP、攻撃力、治癒力のステータスはLV1と★5Lv90のみ記録
     value_HP = df_status.iloc[0, 0].split("/")
-    df_status.iloc[0, 0] = f"{value_HP[0]}/{value_HP[-1]}"
+    df_status.iloc[0, 0] = f"{value_HP[-1]}"
 
     value_ATK = df_status.iloc[0, 1].split("/")
-    df_status.iloc[0, 1] = f"{value_ATK[0]}/{value_ATK[-1]}"
+    df_status.iloc[0, 1] = f"{value_ATK[-1]}"
 
     value_RCV = df_status.iloc[0, 2].split("/")
-    df_status.iloc[0, 2] = f"{value_RCV[0]}/{value_RCV[-1]}"
+    df_status.iloc[0, 2] = f"{value_RCV[-1]}"
 
     df = pd.concat([df_profile, df_status], axis=1)
 
@@ -226,6 +242,13 @@ df_student_profile.drop(columns=["名前", "射程距離"], inplace=True)
 # 誕生日の書式をMM月DD日からMM/DDに変更
 df_student_profile["誕生日"] = (
     df_student_profile["誕生日"].str.replace("月", "/").str.replace("日", "")
+)
+# カラム名の変更
+df_student_profile.rename(columns={"学園": "学年"}, inplace=True)
+# 学年の整形
+df_student_profile["学年"] = df_student_profile.apply(
+    lambda row: convert_grade(row["学年"], row["年齢"]),
+    axis=1,
 )
 df = pd.concat([df, df_student_profile], axis=1)
 # CSVファイルとして保存
