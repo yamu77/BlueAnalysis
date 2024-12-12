@@ -12,49 +12,30 @@ HOSHINO = "ホシノ（臨戦）"
 
 
 def get_student_list() -> pd.DataFrame:
-    # URLを指定
     url = "https://bluearchive.wikiru.jp/?%E3%82%AD%E3%83%A3%E3%83%A9%E3%82%AF%E3%82%BF%E3%83%BC%E4%B8%80%E8%A6%A7"
-
-    # ページの内容を取得
     response = requests.get(url)
     response.encoding = "utf-8"
 
-    # テーブルを読み込み
+    # テーブルの読み込み
     df = pd.read_html(StringIO(response.text), attrs={"id": "sortabletable1"})[0]
-
-    # 空の行を削除
     df = df.dropna(subset=["名前"])
-
-    # カラム名の空白を削除
     df.columns = df.columns.str.replace(" ", "")
-
-    # 値の空白を削除
     df = df.apply(lambda x: x.str.replace(" ", "") if x.dtype == "object" else x)
-
-    # 画像カラムを削除
     df = df.drop(["画像", "募集", "追加"], axis=1)
 
     return df
 
 
 def get_student_appearance() -> pd.DataFrame:
-    # URLを指定
     url = "https://bluearchive.wikiru.jp/?%E3%82%AD%E3%83%A3%E3%83%A9%E3%82%AF%E3%82%BF%E3%83%BC%E5%AE%9F%E8%A3%85%E5%B1%A5%E6%AD%B4"
 
-    # ページの内容を取得
     response = requests.get(url)
     response.encoding = "utf-8"
 
-    # テーブルを読み込み
+    # テーブルの読み込み
     df = pd.read_html(StringIO(response.text), attrs={"id": "sortabletable1"})[0]
-
-    # 空の行を削除
     df = df.dropna(subset=["名前"])
-
-    # カラム名の空白を削除
     df.columns = df.columns.str.replace(" ", "")
-
-    # 画像カラムを削除
     drop_columns = [i for i in df.columns if i not in ["名前", "実装日"]]
     df = df.drop(drop_columns, axis=1)
 
@@ -71,14 +52,12 @@ def get_student_profile_for_playwright(url, switch=False) -> dict:
         dict: キャラクターのプロフィール情報
     """
     with sync_playwright() as p:
-        # ブラウザを起動
         browser = p.chromium.launch()
         page = browser.new_page()
 
-        # URLにアクセス
         page.goto(url)
 
-        # 指定要素を取得
+        # 指定要素は切り替えの有無で変える
         if switch:
             profile = {
                 "名前": page.locator(
@@ -127,8 +106,6 @@ def get_student_profile_for_playwright(url, switch=False) -> dict:
             table = page.locator(
                 "#content_1_0+p+div>div:nth-child(2)>div:nth-child(2)"
             ).inner_html()
-
-        # ブラウザを閉じる
         browser.close()
 
         return profile, table
@@ -138,16 +115,14 @@ def get_student_profile(name: str, switch=False) -> pd.DataFrame:
     # URLを指定
     url = f"https://bluearchive.wikiru.jp/?{name}"
 
-    # ページの内容を取得
     response = requests.get(url)
     response.encoding = "utf-8"
 
-    # BeautifulSoupでHTMLを解析
     soup = BeautifulSoup(response.text, "html.parser")
-    # プロフィールの取得
+    # urlパラメータの取得
     parm = url.split("?")[1]
     param_parsed = urllib.parse.unquote(parm)
-    # ホシノ臨戦（切り替え可能な生徒）の場合はplaywrightを使用
+    # ホシノ臨戦（切り替え可能な生徒）の場合はplaywrightでスクレイピング
     if param_parsed == HOSHINO:
         profile, table = get_student_profile_for_playwright(url, switch)
     else:
@@ -178,7 +153,7 @@ def get_student_profile(name: str, switch=False) -> pd.DataFrame:
     df_status = pd.read_html(StringIO(str(table)))[0]
     df_status = df_status.head(5)
 
-    # データフレームを整形
+    # データフレームの整形
     columns = []
     values = []
     for i in range(0, len(df_status), 2):
@@ -186,6 +161,7 @@ def get_student_profile(name: str, switch=False) -> pd.DataFrame:
         values.extend(list(df_status.iloc[:, i + 1].values))
 
     df_status = pd.DataFrame(data=[values], columns=columns)
+    # 欠損値を0埋め
     df_status = df_status.fillna(0)
     # 並び替え
     sorted_columns = [
@@ -205,6 +181,8 @@ def get_student_profile(name: str, switch=False) -> pd.DataFrame:
         "コスト回復力",
     ]
     df_status = df_status[sorted_columns]
+
+    # HP、攻撃力、治癒力のステータスはLV1と★5Lv90のみ記録
     value_HP = df_status.iloc[0, 0].split("/")
     df_status.iloc[0, 0] = f"{value_HP[0]}/{value_HP[-1]}"
 
@@ -219,27 +197,36 @@ def get_student_profile(name: str, switch=False) -> pd.DataFrame:
     return df
 
 
+# 生徒一覧の取得
 df_student_list = get_student_list()
+# 生徒実装日の取得
 df_student_appearance = get_student_appearance()
 df = pd.merge(df_student_list, df_student_appearance, on="名前", how="left")
+# 生徒名のリストを取得
 student_list = list(df["名前"].values)
 df_student_profile = pd.DataFrame()
+# 切り替え生徒用スイッチ
 switch_student = False
 for student in tqdm(student_list):
     try:
         df_student_profile = pd.concat(
             [df_student_profile, get_student_profile(student, switch_student)], axis=0
         )
+        # 切り替え生徒の場合切り替える
         if student == HOSHINO:
             switch_student = not switch_student
         time.sleep(1)
     except Exception as e:
         raise f"Error from {student}: {e}"
-# インデックスをリセット
+# インデックスのリセット
 df_student_profile.reset_index(drop=True, inplace=True)
 df.reset_index(drop=True, inplace=True)
 # 重複カラム削除
 df_student_profile.drop(columns=["名前", "射程距離"], inplace=True)
+# 誕生日の書式をMM月DD日からMM/DDに変更
+df_student_profile["誕生日"] = (
+    df_student_profile["誕生日"].str.replace("月", "/").str.replace("日", "")
+)
 df = pd.concat([df, df_student_profile], axis=1)
 # CSVファイルとして保存
 df.to_csv("public/students.csv", index=False, encoding="utf-8")
