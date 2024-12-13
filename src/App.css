@@ -1,6 +1,5 @@
 /* カラーテーマの定義 */
 :root {
-  --content-height: calc(100vh - 110px);
   --background-primary: #ffffff;
   --background-secondary: #f4f4f4;
   --background-hover: #f8f8f8;
@@ -25,7 +24,6 @@
     --border-light: #333333;
     --table-shadow: rgba(0,0,0,0.3);
     --scrollbar-color: rgba(255, 255, 255, 0.2);
-    --content-height: 50svh;
   }
 }
 @media (max-width: 600px) {
