@@ -7,7 +7,7 @@
   --text-secondary: #888;
   --border-color: #ddd;
   --border-light: #eee;
-  --table-shadow: rgba(0,0,0,0.1);
+  --table-shadow: rgba(0, 0, 0, 0.1);
   --scrollbar-color: rgba(0, 0, 0, 0.2);
   --content-height: calc(100vh - 130px);
 }
@@ -15,24 +15,25 @@
 /* ダークモードのカラーテーマ */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-primary: #1a1a1a;
-    --background-secondary: #2d2d2d;
-    --background-hover: #333333;
-    --text-primary: #e0e0e0;
-    --text-secondary: #a0a0a0;
-    --border-color: #404040;
-    --border-light: #333333;
-    --table-shadow: rgba(0,0,0,0.3);
-    --scrollbar-color: rgba(255, 255, 255, 0.2);
+    --background-primary: #ffffff;
+    --background-secondary: #f4f4f4;
+    --background-hover: #f8f8f8;
+    --text-primary: #333;
+    --text-secondary: #888;
+    --border-color: #ddd;
+    --border-light: #eee;
+    --table-shadow: rgba(0, 0, 0, 0.1);
+    --scrollbar-color: rgba(0, 0, 0, 0.2);
+    --content-height: calc(100vh - 130px);
   }
 }
 @media (max-width: 600px) {
-  :root{
+  :root {
     --content-height: 50svh;
   }
 }
 
-html *{
+html * {
   box-sizing: border-box;
 }
 #root {
@@ -45,8 +46,7 @@ html *{
   color: var(--text-primary);
 }
 
-
-main{
+main {
   margin-top: 15px;
   padding: 0 10px;
 }
@@ -287,14 +287,14 @@ th .MuiSelect-select {
   .table-container {
     max-height: calc(100vh - 200px);
   }
-  
+
   .student-table th div[role="button"] {
     padding: 0.25rem;
   }
-  .header{
+  .header {
     padding: 0 5px;
   }
-  .header-logo{
+  .header-logo {
     height: 50px;
   }
 }
