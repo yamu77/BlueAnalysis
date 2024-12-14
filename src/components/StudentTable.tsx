@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -91,50 +91,53 @@ const multiSelectFilterFn = (
   return filterValue.includes(value);
 };
 
+const visibilityInit = {
+  レア: false,
+  名前: true,
+  武器種: true,
+  遮蔽物: false,
+  役割: false,
+  ポジション: false,
+  クラス: true,
+  学校: true,
+  攻撃: true,
+  防御: false,
+  市街: false,
+  屋外: false,
+  屋内: false,
+  射程距離: false,
+  装備1: false,
+  装備2: false,
+  装備3: false,
+  実装日: true,
+  学年: false,
+  部活: false,
+  年齢: false,
+  誕生日: false,
+  身長: false,
+  HP: false,
+  攻撃力: false,
+  治癒力: false,
+  命中値: false,
+  会心値: false,
+  安定値: false,
+  CC強化力: false,
+  会心ダメージ: false,
+  CC抵抗力: false,
+  防御力: false,
+  回避値: false,
+  防御貫通値: false,
+  コスト回復力: false,
+};
+
 export function StudentTable() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    レア: true,
-    名前: true,
-    武器種: true,
-    遮蔽物: false,
-    役割: true,
-    ポジション: false,
-    クラス: true,
-    学校: true,
-    攻撃: false,
-    防御: false,
-    市街: false,
-    屋外: false,
-    屋内: false,
-    射程距離: false,
-    装備1: false,
-    装備2: false,
-    装備3: false,
-    実装日: true,
-    学年: true,
-    部活: false,
-    年齢: false,
-    誕生日: false,
-    身長: false,
-    HP: false,
-    攻撃力: false,
-    治癒力: false,
-    命中値: false,
-    会心値: false,
-    安定値: false,
-    CC強化力: false,
-    会心ダメージ: false,
-    CC抵抗力: false,
-    防御力: false,
-    回避値: false,
-    防御貫通値: false,
-    コスト回復力: false,
-  });
+  const [columnVisibility, setColumnVisibility] =
+    useState<VisibilityState>(visibilityInit);
 
   const columnHelper = createColumnHelper<Student>();
 
@@ -148,56 +151,54 @@ export function StudentTable() {
     () => [
       columnHelper.accessor("レア", {
         header: "レア度",
-        size: 50,
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("名前", {
         header: "名前",
-        size: 200,
       }),
       columnHelper.accessor("武器種", {
         header: "武器種",
-        size: 50,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("遮蔽物", {
         header: "遮蔽物",
-        size: 50,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("役割", {
         header: "役割",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("ポジション", {
         header: "ポジション",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("クラス", {
         header: "クラス",
-        size: 120,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("学校", {
         header: "学校",
-        size: 150,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("攻撃", {
         header: "攻撃",
-        size: 80,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("防御", {
         header: "防御",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("市街", {
         header: "市街",
-        size: 60,
+
         filterFn: multiSelectFilterFn,
         cell: (info) => (
           <img
@@ -210,7 +211,7 @@ export function StudentTable() {
       }),
       columnHelper.accessor("屋外", {
         header: "屋外",
-        size: 60,
+
         filterFn: multiSelectFilterFn,
         cell: (info) => (
           <img
@@ -223,7 +224,7 @@ export function StudentTable() {
       }),
       columnHelper.accessor("屋内", {
         header: "屋内",
-        size: 60,
+
         filterFn: multiSelectFilterFn,
         cell: (info) => (
           <img
@@ -236,27 +237,27 @@ export function StudentTable() {
       }),
       columnHelper.accessor("射程距離", {
         header: "射程距離",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("装備1", {
         header: "装備1",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("装備2", {
         header: "装備2",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("装備3", {
         header: "装備3",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("実装日", {
         header: "実装日",
-        size: 100,
+
         filterFn: (row, _columnId, filterValue: DateRange) => {
           if (
             !filterValue?.startYear &&
@@ -286,22 +287,22 @@ export function StudentTable() {
       }),
       columnHelper.accessor("学年", {
         header: "学年",
-        size: 200,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("部活", {
         header: "部活",
-        size: 150,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("年齢", {
         header: "年齢",
-        size: 80,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("誕生日", {
         header: "誕生日",
-        size: 100,
+
         filterFn: (row, _columnId, filterValue: string) => {
           if (!filterValue) return true;
           const date = row.getValue("誕生日") as string;
@@ -313,7 +314,7 @@ export function StudentTable() {
       }),
       columnHelper.accessor("身長", {
         header: "身長",
-        size: 80,
+
         filterFn: (row, _columnId, filterValue) => {
           if (!filterValue) return true;
           if (filterValue === "unknown") {
@@ -332,67 +333,67 @@ export function StudentTable() {
       }),
       columnHelper.accessor("HP", {
         header: "HP",
-        size: 150,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("攻撃力", {
         header: "攻撃力",
-        size: 150,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("治癒力", {
         header: "治癒力",
-        size: 150,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("命中値", {
         header: "命中値",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("会心値", {
         header: "会心値",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("安定値", {
         header: "安定値",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("CC強化力", {
         header: "CC強化力",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("会心ダメージ", {
         header: "会心ダメージ",
-        size: 120,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("CC抵抗力", {
         header: "CC抵抗力",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("防御力", {
         header: "防御力",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("回避値", {
         header: "回避値",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("防御貫通値", {
         header: "防御貫通値",
-        size: 100,
+
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("コスト回復力", {
         header: "コスト回復力",
-        size: 120,
+
         filterFn: multiSelectFilterFn,
       }),
     ],
@@ -424,35 +425,17 @@ export function StudentTable() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
-  const getVisibleColumns = () => {
+  const getVisibleColumns = useCallback(() => {
     if (isMobile) {
-      // モバイルで表示するカラム
-      setColumnVisibility({
-        レア: true,
-        名前: true,
-        武器種: true,
-        役割: true,
-        クラス: false,
-        学校: false,
-        実装日: false,
-        学年: false,
-        // その他のカラムはfalse
-      });
+      setColumnVisibility(visibilityInit);
     } else if (isTablet) {
-      // タブレットで表示するカラム
-      setColumnVisibility({
-        レア: true,
-        名前: true,
-        武器種: true,
-        役割: true,
-        クラス: true,
-        学校: true,
-        実装日: false,
-        学年: true,
-        // その他のカラムはfalse
-      });
+      setColumnVisibility(visibilityInit);
     }
-  };
+  }, [isMobile, isTablet]);
+
+  useEffect(() => {
+    getVisibleColumns();
+  }, [getVisibleColumns]);
 
   useEffect(() => {
     fetch("/students.json")
@@ -468,10 +451,6 @@ export function StudentTable() {
         setLoading(false);
       });
   }, []);
-
-  useEffect(() => {
-    getVisibleColumns();
-  }, [isMobile, isTablet]);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
