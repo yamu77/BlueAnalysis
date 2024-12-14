@@ -148,3 +148,41 @@
     background-color: var(--background-primary);
   }
 }
+
+.filter-container .MuiList-root {
+  padding: 0;
+}
+
+.filter-container .MuiListItem-root {
+  padding: 0 8px;
+}
+
+.filter-container .MuiListItemIcon-root {
+  min-width: 36px;
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.filter-button:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .filter-button {
+    background-color: var(--background-primary);
+    border-color: rgba(255, 255, 255, 0.23);
+  }
+
+  .filter-button:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}

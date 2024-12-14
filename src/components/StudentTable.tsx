@@ -24,11 +24,16 @@ import {
   IconButton,
   Popover,
   Tooltip,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import { StudentStatsChart } from "./StudentStatsChart";
 import "./StudentTable.css";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 interface Student {
   レア: string;
@@ -75,6 +80,16 @@ interface DateRange {
   endYear: string;
   endMonth: string;
 }
+
+const multiSelectFilterFn = (
+  row: any,
+  columnId: string,
+  filterValue: string[]
+) => {
+  if (!filterValue || filterValue.length === 0) return true;
+  const value = row.getValue(columnId);
+  return filterValue.includes(value);
+};
 
 export function StudentTable() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -123,7 +138,7 @@ export function StudentTable() {
 
   const columnHelper = createColumnHelper<Student>();
 
-  // カラムごとのユニークな値を取得する関数
+  // カラムごとのユニークな��を取得する関数
   const getUniqueValues = (data: Student[], key: keyof Student) => {
     const values = new Set(data.map((item) => String(item[key])));
     return Array.from(values).sort();
@@ -134,7 +149,7 @@ export function StudentTable() {
       columnHelper.accessor("レア", {
         header: "レア度",
         size: 50,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("名前", {
         header: "名前",
@@ -143,47 +158,47 @@ export function StudentTable() {
       columnHelper.accessor("武器種", {
         header: "武器種",
         size: 50,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("遮蔽物", {
         header: "遮蔽物",
         size: 50,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("役割", {
         header: "役割",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("ポジション", {
         header: "ポジション",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("クラス", {
         header: "クラス",
         size: 120,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("学校", {
         header: "学校",
         size: 150,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("攻撃", {
         header: "攻撃",
         size: 80,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("防御", {
         header: "防御",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("市街", {
         header: "市街",
         size: 60,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
         cell: (info) => (
           <img
             src={`/icons/face_${info.getValue().charAt(0)}.png`}
@@ -196,7 +211,7 @@ export function StudentTable() {
       columnHelper.accessor("屋外", {
         header: "屋外",
         size: 60,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
         cell: (info) => (
           <img
             src={`/icons/face_${info.getValue().charAt(0)}.png`}
@@ -209,7 +224,7 @@ export function StudentTable() {
       columnHelper.accessor("屋内", {
         header: "屋内",
         size: 60,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
         cell: (info) => (
           <img
             src={`/icons/face_${info.getValue().charAt(0)}.png`}
@@ -222,22 +237,22 @@ export function StudentTable() {
       columnHelper.accessor("射程距離", {
         header: "射程距離",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("装備1", {
         header: "装備1",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("装備2", {
         header: "装備2",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("装備3", {
         header: "装備3",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("実装日", {
         header: "実装日",
@@ -272,17 +287,17 @@ export function StudentTable() {
       columnHelper.accessor("学年", {
         header: "学年",
         size: 200,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("部活", {
         header: "部活",
         size: 150,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("年齢", {
         header: "年齢",
         size: 80,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("誕生日", {
         header: "誕生日",
@@ -305,7 +320,7 @@ export function StudentTable() {
             const height = parseInt(row.getValue("身長"));
             return isNaN(height);
           }
-          const height = parseInt(row.getValue("身長"));
+          const height = parseInt(row.getValue("��長"));
           const filterHeight = parseInt(filterValue as string);
           if (isNaN(height)) return false;
 
@@ -318,67 +333,67 @@ export function StudentTable() {
       columnHelper.accessor("HP", {
         header: "HP",
         size: 150,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("攻撃力", {
         header: "攻撃力",
         size: 150,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("治癒力", {
         header: "治癒力",
         size: 150,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("命中値", {
         header: "命中値",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("会心値", {
         header: "会心値",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("安定値", {
         header: "安定値",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("CC強化力", {
         header: "CC強化力",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("会心ダメージ", {
         header: "会心ダメージ",
         size: 120,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("CC抵抗力", {
         header: "CC抵抗力",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("防御力", {
         header: "防御力",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("回避値", {
         header: "回避値",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("防御貫通値", {
         header: "防御貫通値",
         size: 100,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("コスト回復力", {
         header: "コスト回復力",
         size: 120,
-        filterFn: "equals",
+        filterFn: multiSelectFilterFn,
       }),
     ],
     [columnHelper]
@@ -471,6 +486,17 @@ export function StudentTable() {
 
   const clearAllFilters = () => {
     table.resetColumnFilters();
+  };
+
+  const [openFilters, setOpenFilters] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+
+  const handleFilterClick = (columnId: string) => {
+    setOpenFilters((prev) => ({
+      ...prev,
+      [columnId]: !prev[columnId],
+    }));
   };
 
   if (error) return <div>{error}</div>;
@@ -794,27 +820,108 @@ export function StudentTable() {
                               size="small"
                               sx={{ marginTop: "0.5rem" }}
                             >
-                              <Select
-                                value={
-                                  (header.column.getFilterValue() as string) ??
-                                  ""
+                              <div
+                                id={`filter-${header.column.id}`}
+                                onClick={() =>
+                                  handleFilterClick(header.column.id)
                                 }
-                                onChange={(e) =>
-                                  header.column.setFilterValue(e.target.value)
-                                }
-                                displayEmpty
-                                sx={{ fontSize: "0.8rem" }}
+                                className="filter-button"
                               >
-                                <MenuItem value="">すべて</MenuItem>
-                                {getUniqueValues(
-                                  students,
-                                  header.column.id as keyof Student
-                                ).map((value) => (
-                                  <MenuItem key={value} value={value}>
-                                    {value}
-                                  </MenuItem>
-                                ))}
-                              </Select>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontSize: "0.8rem" }}
+                                >
+                                  {(
+                                    (header.column.getFilterValue() as string[]) ||
+                                    []
+                                  ).length > 0
+                                    ? `${
+                                        (
+                                          (header.column.getFilterValue() as string[]) ||
+                                          []
+                                        ).length
+                                      }件選択中`
+                                    : "フィルター"}
+                                </Typography>
+                                <KeyboardArrowDownIcon
+                                  sx={{
+                                    transform: openFilters[header.column.id]
+                                      ? "rotate(180deg)"
+                                      : "rotate(0deg)",
+                                    transition: "transform 0.2s",
+                                  }}
+                                />
+                              </div>
+                              <Popover
+                                open={openFilters[header.column.id] || false}
+                                onClose={() =>
+                                  handleFilterClick(header.column.id)
+                                }
+                                anchorEl={document.getElementById(
+                                  `filter-${header.column.id}`
+                                )}
+                                anchorOrigin={{
+                                  vertical: "bottom",
+                                  horizontal: "left",
+                                }}
+                                transformOrigin={{
+                                  vertical: "top",
+                                  horizontal: "left",
+                                }}
+                                sx={{
+                                  "& .MuiPopover-paper": {
+                                    marginTop: "4px",
+                                  },
+                                }}
+                              >
+                                <List
+                                  dense
+                                  sx={{
+                                    width: "200px",
+                                    maxHeight: "300px",
+                                    overflow: "auto",
+                                  }}
+                                >
+                                  {getUniqueValues(
+                                    students,
+                                    header.column.id as keyof Student
+                                  ).map((value) => (
+                                    <ListItem
+                                      key={value}
+                                      dense
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const currentFilters =
+                                          (header.column.getFilterValue() as string[]) ||
+                                          [];
+                                        const newFilters =
+                                          currentFilters.includes(value)
+                                            ? currentFilters.filter(
+                                                (v) => v !== value
+                                              )
+                                            : [...currentFilters, value];
+                                        header.column.setFilterValue(
+                                          newFilters
+                                        );
+                                      }}
+                                      sx={{ cursor: "pointer" }}
+                                    >
+                                      <ListItemIcon>
+                                        <Checkbox
+                                          edge="start"
+                                          checked={(
+                                            (header.column.getFilterValue() as string[]) ||
+                                            []
+                                          ).includes(value)}
+                                          tabIndex={-1}
+                                          disableRipple
+                                        />
+                                      </ListItemIcon>
+                                      <ListItemText primary={value} />
+                                    </ListItem>
+                                  ))}
+                                </List>
+                              </Popover>
                             </FormControl>
                           )}
                         </div>
