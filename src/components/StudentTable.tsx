@@ -510,7 +510,10 @@ export function StudentTable() {
               <ClearAllIcon />
               <Typography
                 variant="caption"
-                sx={{ display: { xs: "none", sm: "block" } }}
+                sx={{
+                  display: "block",
+                  fontSize: { xs: "0.7rem", sm: "0.8rem" },
+                }}
               >
                 フィルターリセット
               </Typography>
@@ -535,7 +538,10 @@ export function StudentTable() {
               <MenuIcon />
               <Typography
                 variant="caption"
-                sx={{ display: { xs: "none", sm: "block" } }}
+                sx={{
+                  display: "block",
+                  fontSize: { xs: "0.7rem", sm: "0.8rem" },
+                }}
               >
                 表示の設定
               </Typography>
@@ -771,7 +777,7 @@ export function StudentTable() {
                                     Math.ceil(Math.max(...heights) / 5) * 5;
 
                                   const options = [];
-                                  // 不明カテゴリを追加
+                                  // 不明カテゴリ���追加
                                   options.push(
                                     <MenuItem key="unknown" value="unknown">
                                       不明
