@@ -251,6 +251,9 @@ df_student_profile["学年"] = df_student_profile.apply(
     axis=1,
 )
 df = pd.concat([df, df_student_profile], axis=1)
+# 名前でソート
+df = df.sort_values("名前")
+
 # CSVファイルとして保存
 df.to_csv("public/students.csv", index=False, encoding="utf-8")
 
