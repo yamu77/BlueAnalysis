@@ -64,15 +64,19 @@
 }
 
 .sort-header {
-  cursor: pointer;
-  user-select: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 4px;
+  user-select: none;
+}
+
+.sort-header:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .sort-indicator {
-  font-size: 0.8rem;
+  display: inline-block;
+  font-size: 0.8em;
 }
 
 .filter-container {
@@ -84,10 +88,6 @@
 .filter-row {
   display: flex;
   gap: 8px;
-}
-
-.sort-header:hover {
-  background-color: var(--background-hover);
 }
 
 .student-table td {

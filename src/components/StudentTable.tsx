@@ -152,9 +152,11 @@ export function StudentTable() {
       columnHelper.accessor("レア", {
         header: "レア度",
         filterFn: multiSelectFilterFn,
+        enableSorting: true,
       }),
       columnHelper.accessor("名前", {
         header: "名前",
+        enableSorting: true,
       }),
       columnHelper.accessor("武器種", {
         header: "武器種",
@@ -556,7 +558,11 @@ export function StudentTable() {
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <th key={header.id}>
-                      <div className="sort-header">
+                      <div
+                        className="sort-header"
+                        onClick={header.column.getToggleSortingHandler()}
+                        style={{ cursor: "pointer" }}
+                      >
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
