@@ -189,12 +189,12 @@ export function StudentTable() {
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("攻撃", {
-        header: "攻撃",
+        header: "攻撃属性",
 
         filterFn: multiSelectFilterFn,
       }),
       columnHelper.accessor("防御", {
-        header: "防御",
+        header: "防御属性",
 
         filterFn: multiSelectFilterFn,
       }),
