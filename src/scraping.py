@@ -251,6 +251,8 @@ df_student_profile["学年"] = df_student_profile.apply(
     axis=1,
 )
 df = pd.concat([df, df_student_profile], axis=1)
+df.rename(columns={"攻撃": "攻撃属性"}, inplace=True)
+df.rename(columns={"防御": "防御属性"}, inplace=True)
 # 名前でソート
 df = df.sort_values("名前")
 
