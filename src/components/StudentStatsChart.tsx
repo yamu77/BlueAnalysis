@@ -61,7 +61,7 @@ const EXCLUDED_FIELDS = [
   "防御貫通値",
 ] as const;
 
-// 生徒の重複を除外する数
+// 生徒の重複を除外する���
 const getUniqueStudents = (students: Student[]): Student[] => {
   const uniqueMap = new Map<string, Student>();
 
@@ -88,9 +88,28 @@ export function StudentStatsChart({ students }: Props) {
     implementationDateUnit: "年",
   });
 
+  // データが空の場合の処理を追加
+  if (!students || students.length === 0) {
+    return (
+      <Paper
+        sx={{
+          p: 2,
+          height: "calc(100vh - 100px)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Typography variant="h6" color="text.secondary">
+          該当するデータがありません
+        </Typography>
+      </Paper>
+    );
+  }
+
   // 名前以外の全てのカラムを取得し、除外項目をフィルタリング
   const columns = Object.keys(students[0])
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((key) => !EXCLUDED_FIELDS.includes(key as any))
     .sort() as (keyof Student)[];
 
