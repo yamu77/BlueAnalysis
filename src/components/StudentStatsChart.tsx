@@ -314,7 +314,22 @@ export function StudentStatsChart({ students }: Props) {
               contentStyle={{
                 backgroundColor: theme.palette.background.paper,
                 border: `1px solid ${theme.palette.divider}`,
-                color: theme.palette.text.primary,
+                color:
+                  theme.palette.mode === "dark"
+                    ? "#fff"
+                    : theme.palette.text.primary,
+              }}
+              itemStyle={{
+                color:
+                  theme.palette.mode === "dark"
+                    ? "#fff"
+                    : theme.palette.text.primary,
+              }}
+              labelStyle={{
+                color:
+                  theme.palette.mode === "dark"
+                    ? "#fff"
+                    : theme.palette.text.primary,
               }}
             />
             <Bar dataKey="count">
