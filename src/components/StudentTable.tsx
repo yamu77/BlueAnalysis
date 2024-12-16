@@ -448,7 +448,7 @@ export function StudentTable() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("データ読み込みエラー:", err);
+        console.error("データ読���込みエラー:", err);
         setError("データの読み込みに失敗しました");
         setLoading(false);
       });
@@ -500,9 +500,15 @@ export function StudentTable() {
                 display: "flex",
                 alignItems: "center",
                 gap: "4px",
-                backgroundColor: "white",
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255, 255, 255, 0.08)"
+                    : "white",
                 "&:hover": {
-                  backgroundColor: "#f5f5f5",
+                  backgroundColor:
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.12)"
+                      : "#f5f5f5",
                 },
                 boxShadow: "0 0 5px rgba(0,0,0,0.2)",
                 padding: "4px 8px",
@@ -528,9 +534,15 @@ export function StudentTable() {
                 display: "flex",
                 alignItems: "center",
                 gap: "4px",
-                backgroundColor: "white",
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255, 255, 255, 0.08)"
+                    : "white",
                 "&:hover": {
-                  backgroundColor: "#f5f5f5",
+                  backgroundColor:
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.12)"
+                      : "#f5f5f5",
                 },
                 boxShadow: open ? "none" : "0 0 5px rgba(0,0,0,0.2)",
                 padding: "4px 8px",

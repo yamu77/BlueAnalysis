@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { Student } from "../types/Student";
+import { useTheme } from "@mui/material/styles";
 
 interface Props {
   students: Student[];
@@ -61,7 +62,7 @@ const EXCLUDED_FIELDS = [
   "防御貫通値",
 ] as const;
 
-// 生徒の重複を除外する���
+// 生徒の重複を除外する
 const getUniqueStudents = (students: Student[]): Student[] => {
   const uniqueMap = new Map<string, Student>();
 
@@ -83,6 +84,7 @@ const getUniqueStudents = (students: Student[]): Student[] => {
 };
 
 export function StudentStatsChart({ students }: Props) {
+  const theme = useTheme();
   const [selectedColumn, setSelectedColumn] = useState<keyof Student>("レア");
   const [chartOptions, setChartOptions] = useState<ChartOptions>({
     implementationDateUnit: "年",
@@ -198,19 +200,33 @@ export function StudentStatsChart({ students }: Props) {
 
   const data = getChartData(selectedColumn);
 
-  // カラーパレットの生成
-  const colors = [
-    "#8884d8",
-    "#82ca9d",
-    "#ffc658",
-    "#ff7300",
-    "#a4de6c",
-    "#d0ed57",
-    "#83a6ed",
-    "#8dd1e1",
-    "#a4de6c",
-    "#d0ed57",
-  ];
+  // カラーパレットの生成（ダークモード対応）
+  const colors =
+    theme.palette.mode === "dark"
+      ? [
+          "#bb86fc", // メインパープル（ダークモード）
+          "#03dac6", // セカンダリティール
+          "#cf6679", // エラーピンク
+          "#b388ff",
+          "#8c9eff",
+          "#82b1ff",
+          "#80d8ff",
+          "#84ffff",
+          "#a7ffeb",
+          "#b9f6ca",
+        ]
+      : [
+          "#8884d8",
+          "#82ca9d",
+          "#ffc658",
+          "#ff7300",
+          "#a4de6c",
+          "#d0ed57",
+          "#83a6ed",
+          "#8dd1e1",
+          "#a4de6c",
+          "#d0ed57",
+        ];
 
   return (
     <Paper
@@ -227,6 +243,7 @@ export function StudentStatsChart({ students }: Props) {
           xs: "0",
           sm: selectedColumn === "部活" ? "800px" : "0",
         },
+        bgcolor: "background.paper", // テーマに応じた背景色
       }}
     >
       <Typography variant="h6" gutterBottom>
@@ -276,16 +293,30 @@ export function StudentStatsChart({ students }: Props) {
       <div style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer>
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke={
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "rgba(0, 0, 0, 0.1)"
+              }
+            />
             <XAxis
               dataKey="name"
               interval={0}
               textAnchor="left"
               height={120}
               angle={90}
+              tick={{ fill: theme.palette.text.primary }} // テーマに応じたテキスト色
             />
-            <YAxis />
-            <Tooltip />
+            <YAxis tick={{ fill: theme.palette.text.primary }} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.divider}`,
+                color: theme.palette.text.primary,
+              }}
+            />
             <Bar dataKey="count">
               {data.map((_, index) => (
                 <Cell
