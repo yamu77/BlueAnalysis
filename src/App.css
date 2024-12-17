@@ -97,13 +97,6 @@ h1 {
   margin-top: 0;
 }
 
-.student-table {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 1rem;
-  overflow-x: hidden;
-}
-
 .table-controls {
   margin-bottom: 1rem;
   position: sticky;
@@ -171,12 +164,6 @@ th .MuiInput-root input {
   padding: 4px 8px;
 }
 
-td {
-  padding: 0.75rem;
-  border-bottom: 1px solid var(--border-light);
-  white-space: nowrap;
-}
-
 tr:hover td {
   background: var(--background-hover);
 }
@@ -239,59 +226,8 @@ th .MuiSelect-select {
   font-size: 0.9rem;
 }
 
-.student-table table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.student-table th,
-.student-table td {
-  padding: 0.75rem;
-  border-bottom: 1px solid #eee;
-}
-
-.student-table th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  border-bottom: 2px solid #ddd;
-}
-
-.student-table th div[role="button"]:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.student-table th .MuiFormControl-root {
-  position: relative;
-  z-index: 3;
-}
-
 @media (max-width: 600px) {
   #root {
     padding: 0;
-  }
-
-  .student-table th,
-  .student-table td {
-    padding: 0.5rem;
-    font-size: 0.875rem;
-  }
-
-  .student-table select {
-    font-size: 0.75rem;
-  }
-
-  .table-container {
-    max-height: calc(100vh - 200px);
-  }
-
-  .student-table th div[role="button"] {
-    padding: 0.25rem;
-  }
-  .header {
-    padding: 0 5px;
-  }
-  .header-logo {
-    height: 50px;
   }
 }
