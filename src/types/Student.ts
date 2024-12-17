@@ -7,8 +7,8 @@ export interface Student {
   ポジション: string;
   クラス: string;
   学校: string;
-  攻撃: string;
-  防御: string;
+  攻撃属性: string;
+  防御属性: string;
   市街: string;
   屋外: string;
   屋内: string;
