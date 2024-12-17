@@ -111,9 +111,9 @@ export function StudentStatsChart({ students }: Props) {
   }
 
   // 名前以外の全てのカラムを取得し、除外項目をフィルタリング
-  const columns = Object.keys(students[0])
-    .filter((key) => !EXCLUDED_FIELDS.includes(key as any))
-    .sort() as (keyof Student)[];
+  const columns = Object.keys(students[0]).filter(
+    (key) => !EXCLUDED_FIELDS.includes(key as any)
+  );
 
   const getChartData = (column: keyof Student): DataCount[] => {
     const counts: { [key: string]: number } = {};
