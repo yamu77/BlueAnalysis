@@ -28,7 +28,11 @@
 }
 @media (max-width: 600px) {
   :root {
-    --content-height: 50svh;
+    --content-height: 60svh;
+  }
+  #root {
+    padding: 0;
+    margin-bottom: 10px;
   }
 }
 
@@ -95,139 +99,4 @@ h1 {
   margin-bottom: 2rem;
   color: #333;
   margin-top: 0;
-}
-
-.table-controls {
-  margin-bottom: 1rem;
-  position: sticky;
-  left: 0;
-  z-index: 2;
-  background: var(--background-primary);
-}
-
-.table-container {
-  background: var(--background-primary);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px var(--table-shadow);
-  max-width: 100%;
-  width: 100%;
-  scrollbar-width: auto;
-  scrollbar-color: var(--scrollbar-color) transparent;
-}
-
-.table-container::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.table-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-color);
-  border-radius: 4px;
-}
-
-table {
-  width: max-content;
-  min-width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-thead {
-  position: sticky;
-  top: 0;
-  background: var(--background-secondary);
-  z-index: 1;
-}
-
-th {
-  background: var(--background-secondary);
-  padding: 16px 0.75rem;
-  text-align: left;
-  font-weight: 600;
-  border-bottom: 2px solid var(--border-color);
-  white-space: nowrap;
-  min-width: 120px;
-  color: var(--text-primary);
-}
-
-/* フィルター入力欄のスタイル */
-th .MuiInput-root {
-  margin-top: 8px;
-  font-size: 0.8rem;
-}
-
-th .MuiInput-root input {
-  padding: 4px 8px;
-}
-
-tr:hover td {
-  background: var(--background-hover);
-}
-
-/* レア度による行の色分け */
-tr[data-rarity="★3"] td {
-  background-color: rgba(255, 215, 0, 0.03);
-}
-
-tr[data-rarity="★2"] td {
-  background-color: rgba(192, 192, 192, 0.03);
-}
-
-tr[data-rarity="★1"] td {
-  background-color: rgba(205, 127, 50, 0.03);
-}
-
-tr:hover td {
-  background-color: var(--background-hover) !important;
-}
-
-/* セレクトボックスのスタイル */
-th .MuiFormControl-root {
-  margin-top: 0.5rem;
-}
-
-th .MuiSelect-select {
-  padding: 8px;
-}
-
-/* ドロップダウンメニューのスタイル */
-.MuiMenu-paper {
-  max-height: 300px !important;
-}
-
-/* カラム表示設定のスタイル */
-.column-visibility-control {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  border: 1px solid #e0e0e0 !important;
-}
-
-.column-visibility-control .MuiFormGroup-root {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.5rem;
-}
-
-.column-visibility-control .MuiFormControlLabel-root {
-  margin: 0;
-  padding: 4px 8px;
-}
-
-.column-visibility-control .MuiFormControlLabel-root:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-  border-radius: 4px;
-}
-
-.column-visibility-control .MuiTypography-root {
-  font-size: 0.9rem;
-}
-
-@media (max-width: 600px) {
-  #root {
-    padding: 0;
-  }
 }
