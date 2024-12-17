@@ -15,7 +15,7 @@ export function Usage() {
   return (
     <Paper className="usage-container">
       <Typography variant="h4" component="h1" gutterBottom>
-        ブルーアーカイブ生徒データベースの使い方
+        BlueAnalysisの使い方
       </Typography>
 
       <section>
@@ -23,7 +23,7 @@ export function Usage() {
           概要
         </Typography>
         <Typography>
-          このツールは、ブルーアーカイブの生徒データを閲覧・分析するためのデータベースです。
+          これは、ブルーアーカイブの生徒データを閲覧・分析するためのデータベースです。
         </Typography>
       </section>
 
