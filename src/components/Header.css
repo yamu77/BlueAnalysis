@@ -5,6 +5,10 @@
   padding: 0 2rem;
   background-color: var(--background-secondary);
   border-bottom: 1px solid var(--border-color);
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  width: 100%;
 }
 
 .header-title {
@@ -33,9 +37,6 @@
 @media (max-width: 600px) {
   .header {
     padding: 0 5px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
   }
   .header-logo {
     height: 50px;
@@ -45,4 +46,4 @@
   .header-logo {
     filter: brightness(0.9);
   }
-} 
+}

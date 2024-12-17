@@ -30,15 +30,13 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <div className="container">
-          <Header />
-          <main>
-            <Routes>
-              <Route path="/" element={<StudentTable />} />
-              <Route path="/usage" element={<Usage />} />
-            </Routes>
-          </main>
-        </div>
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/" element={<StudentTable />} />
+            <Route path="/usage" element={<Usage />} />
+          </Routes>
+        </main>
       </Router>
     </ThemeProvider>
   );
