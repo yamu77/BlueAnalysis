@@ -28,7 +28,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline /> {/* MUIのベーススタイルをリセット */}
+      <CssBaseline />
       <Router>
         <div className="container">
           <Header />
