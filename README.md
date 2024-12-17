@@ -1,50 +1,32 @@
-# React + TypeScript + Vite
+# BlueAnalysis
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ブルーアーカイブの生徒情報見るためのツールです。
 
-Currently, two official plugins are available:
+## 環境
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js v20.14.0
+- Python 3.12.0
 
-## Expanding the ESLint configuration
+ライブラリについては[package.json](./package.json)と[requirements.txt](./requirements.txt)を参照してください。
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 開発
 
-- Configure the top-level `parserOptions` property like this:
+フロント側で都度スクレイピングをすると表示に時間がかかってしまうので、事前にスクレイピングでデータをjsonで保存しておきそれをフロント側で使用する。
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### フロントエンド
+
+以下のコマンドでローカルサーバーが立ち上がるのでここで表示確認をしながら開発する
+
+```bash
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### バックエンド
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+jsonデータ作成の処理用。  
+以下のコマンドでjsonデータの作成を行う。  
+データの確認用にcsvファイルでも作成しておく。
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+python src/scraping.py
 ```
