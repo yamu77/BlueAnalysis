@@ -103,7 +103,7 @@ export function StudentTable() {
 
   const columnHelper = createColumnHelper<Student>();
 
-  // カラムごとのユニークな��を取得する関数
+  // カラムごとのユニークな値を取得する関数
   const getUniqueValues = (data: Student[], key: keyof Student) => {
     const values = new Set(data.map((item) => String(item[key])));
     return Array.from(values).sort();
@@ -285,7 +285,7 @@ export function StudentTable() {
             const height = parseInt(row.getValue("身長"));
             return isNaN(height);
           }
-          const height = parseInt(row.getValue("��長"));
+          const height = parseInt(row.getValue("身長"));
           const filterHeight = parseInt(filterValue as string);
           if (isNaN(height)) return false;
 
@@ -410,7 +410,7 @@ export function StudentTable() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("データ読���込みエラー:", err);
+        console.error("データ読み込みエラー:", err);
         setError("データの読み込みに失敗しました");
         setLoading(false);
       });
