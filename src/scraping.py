@@ -198,7 +198,7 @@ def get_student_profile(name: str, switch=False) -> pd.DataFrame:
     ]
     df_status = df_status[sorted_columns]
 
-    # HP、攻撃力、治癒力のステータスはLV1と★5Lv90のみ記録
+    # HP、攻撃力、治癒力のステータスは★5Lv90のみ記録
     value_HP = df_status.iloc[0, 0].split("/")
     df_status.iloc[0, 0] = f"{value_HP[-1]}"
 
