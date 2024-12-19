@@ -30,6 +30,7 @@ type DataCount = {
 
 interface ChartOptions {
   implementationDateUnit?: "年" | "年月";
+  countDuplicates: boolean;
 }
 
 // 重複カウントしない項目を定義
@@ -88,6 +89,7 @@ export function StudentStatsChart({ students }: Props) {
   const [selectedColumn, setSelectedColumn] = useState<keyof Student>("レア");
   const [chartOptions, setChartOptions] = useState<ChartOptions>({
     implementationDateUnit: "年",
+    countDuplicates: true,
   });
 
   // データが空の場合の処理を追加
@@ -118,11 +120,13 @@ export function StudentStatsChart({ students }: Props) {
   const getChartData = (column: keyof Student): DataCount[] => {
     const counts: { [key: string]: number } = {};
 
-    // 重複を除外すべきフィールドの場合は、getUniqueStudentsを使用
+    // UNIQUE_COUNT_FIELDSに含まれる項目の場合のみ重複カウントの設定を適用
     const targetStudents = UNIQUE_COUNT_FIELDS.includes(
       column as UniqueCountField
     )
-      ? getUniqueStudents(students)
+      ? chartOptions.countDuplicates
+        ? students
+        : getUniqueStudents(students)
       : students;
 
     if (column === "身長") {
@@ -271,7 +275,7 @@ export function StudentStatsChart({ students }: Props) {
           </Select>
         </FormControl>
 
-        {/* 実装日が選択されている場合のみ表示 */}
+        {/* 実装日のオプション */}
         {selectedColumn === "実装日" && (
           <FormControl size="small">
             <Select
@@ -286,6 +290,42 @@ export function StudentStatsChart({ students }: Props) {
               <MenuItem value="年">年単位</MenuItem>
               <MenuItem value="年月">年月単位</MenuItem>
             </Select>
+          </FormControl>
+        )}
+
+        {/* UNIQUE_COUNT_FIELDSに含まれる項目の場合のみ重複カウントのラジオボタンを表示 */}
+        {UNIQUE_COUNT_FIELDS.includes(selectedColumn as UniqueCountField) && (
+          <FormControl>
+            <div style={{ display: "flex", gap: "1rem" }}>
+              <label>
+                <input
+                  type="radio"
+                  value="true"
+                  checked={chartOptions.countDuplicates}
+                  onChange={(e) =>
+                    setChartOptions((prev) => ({
+                      ...prev,
+                      countDuplicates: e.target.value === "true",
+                    }))
+                  }
+                />
+                別衣装生徒含む
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="false"
+                  checked={!chartOptions.countDuplicates}
+                  onChange={(e) =>
+                    setChartOptions((prev) => ({
+                      ...prev,
+                      countDuplicates: e.target.value === "true",
+                    }))
+                  }
+                />
+                含まない
+              </label>
+            </div>
           </FormControl>
         )}
       </div>
