@@ -213,7 +213,7 @@ export function Usage() {
         <Typography>
           データは手動で更新しているので実装から反映までラグがあります。
           <br />
-          最新の更新日: 2024/03/XX
+          最新の更新日: 2024/12/25 ユウカ（パジャマ）、ノア（パジャマ）まで
         </Typography>
       </section>
 
