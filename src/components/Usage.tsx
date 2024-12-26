@@ -224,7 +224,7 @@ export function Usage() {
         <List>
           <ListItem>
             <Link
-              href="https://github.com/yourusername/your-repo-name"
+              href="https://github.com/yamu77/BlueAnalysis"
               target="_blank"
               rel="noopener noreferrer"
             >
