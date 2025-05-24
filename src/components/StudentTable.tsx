@@ -201,8 +201,12 @@ export function StudentTable() {
       }),
       columnHelper.accessor("射程距離", {
         header: "射程距離",
-
-        filterFn: multiSelectFilterFn,
+        filterFn: (row, _columnId, filterValue: string) => {
+          if (!filterValue) return true;
+          const range = row.getValue("射程距離") as string;
+          if (!range) return false;
+          return filterValue == range;
+        },
       }),
       columnHelper.accessor("装備1", {
         header: "装備1",
