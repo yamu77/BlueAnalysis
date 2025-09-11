@@ -129,15 +129,26 @@ export function StudentTable() {
         .map(([column]) => column);
 
       const newSearchParams = new URLSearchParams(searchParams);
+      let hasChanges = false;
 
       // 表示カラムの設定
-      if (visibleColumns.length > 0) {
-        newSearchParams.set("view_columns", visibleColumns.join(","));
-      } else {
-        newSearchParams.delete("view_columns");
+      const currentViewColumns = searchParams.get("view_columns");
+      const newViewColumns =
+        visibleColumns.length > 0 ? visibleColumns.join(",") : null;
+
+      if (currentViewColumns !== newViewColumns) {
+        if (newViewColumns) {
+          newSearchParams.set("view_columns", newViewColumns);
+        } else {
+          newSearchParams.delete("view_columns");
+        }
+        hasChanges = true;
       }
 
       // フィルターの設定
+      const currentFilters = searchParams.get("filters");
+      let newFilters = null;
+
       if (filters && filters.length > 0) {
         const filterObj: { [key: string]: unknown } = {};
         filters.forEach((filter) => {
@@ -150,15 +161,23 @@ export function StudentTable() {
           }
         });
         if (Object.keys(filterObj).length > 0) {
-          newSearchParams.set("filters", JSON.stringify(filterObj));
+          newFilters = JSON.stringify(filterObj);
+        }
+      }
+
+      if (currentFilters !== newFilters) {
+        if (newFilters) {
+          newSearchParams.set("filters", newFilters);
         } else {
           newSearchParams.delete("filters");
         }
-      } else {
-        newSearchParams.delete("filters");
+        hasChanges = true;
       }
 
-      setSearchParams(newSearchParams);
+      // 変更があった場合のみURLを更新
+      if (hasChanges) {
+        setSearchParams(newSearchParams);
+      }
     },
     [searchParams, setSearchParams]
   );
@@ -457,17 +476,15 @@ export function StudentTable() {
       columnVisibility,
     },
     onSortingChange: setSorting,
-    onColumnFiltersChange: (updater) => {
-      const newFilters =
-        typeof updater === "function" ? updater(columnFilters) : updater;
-      setColumnFilters(newFilters);
-      updateUrlParams(columnVisibility, newFilters);
-    },
+    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: (updater) => {
       const newVisibility =
         typeof updater === "function" ? updater(columnVisibility) : updater;
       setColumnVisibility(newVisibility);
-      updateUrlParams(newVisibility, columnFilters);
+      // 表示カラム更新時はフィルターの状態を取得してからURL更新
+      setTimeout(() => {
+        updateUrlParams(newVisibility, columnFilters);
+      }, 0);
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -495,17 +512,40 @@ export function StudentTable() {
     getVisibleColumns();
   }, [getVisibleColumns]);
 
-  // URLパラメータから表示カラムの設定を初期化
-  useEffect(() => {
-    const initialVisibility = getInitialColumnVisibility();
-    setColumnVisibility(initialVisibility);
-  }, [getInitialColumnVisibility]);
+  // URLパラメータから表示カラムの設定を初期化（初回のみ）
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // URLパラメータからフィルターの設定を初期化
   useEffect(() => {
-    const initialFilters = getInitialFilters();
-    setColumnFilters(initialFilters);
-  }, [getInitialFilters]);
+    if (!isInitialized) {
+      const viewColumnsParam = searchParams.get("view_columns");
+      let initialVisibility = visibilityInit;
+      if (viewColumnsParam) {
+        const visibleColumns = viewColumnsParam.split(",");
+        initialVisibility = { ...visibilityInit };
+        Object.keys(visibilityInit).forEach((key) => {
+          initialVisibility[key as keyof VisibilityState] =
+            visibleColumns.includes(key);
+        });
+      }
+      setColumnVisibility(initialVisibility);
+
+      const filtersParam = searchParams.get("filters");
+      let initialFilters: ColumnFiltersState = [];
+      if (filtersParam) {
+        try {
+          const filterObj = JSON.parse(filtersParam);
+          initialFilters = Object.entries(filterObj).map(([id, value]) => ({
+            id,
+            value,
+          }));
+        } catch (error) {
+          console.error("フィルターパラメータの解析エラー:", error);
+        }
+      }
+      setColumnFilters(initialFilters);
+      setIsInitialized(true);
+    }
+  }, []); // 依存関係を空にして初回のみ実行
 
   useEffect(() => {
     fetch("/students.json")
@@ -535,6 +575,7 @@ export function StudentTable() {
 
   const clearAllFilters = () => {
     table.resetColumnFilters();
+    setColumnFilters([]);
     updateUrlParams(columnVisibility, []);
   };
 
@@ -547,6 +588,19 @@ export function StudentTable() {
       ...prev,
       [columnId]: !prev[columnId],
     }));
+  };
+
+  // フィルター値を更新してURLパラメータも同期する関数
+  const updateFilterValue = (columnId: string, value: unknown) => {
+    const newFilters = columnFilters.filter((f) => f.id !== columnId);
+    if (value !== undefined && value !== null && value !== "") {
+      newFilters.push({ id: columnId, value });
+    }
+    setColumnFilters(newFilters);
+    // フィルター更新時は表示カラムの状態を取得してからURL更新
+    setTimeout(() => {
+      updateUrlParams(columnVisibility, newFilters);
+    }, 0);
   };
 
   if (error) return <div>{error}</div>;
@@ -678,14 +732,19 @@ export function StudentTable() {
                                           header.column.getFilterValue() as DateRange
                                         )?.startYear ?? ""
                                       }
-                                      onChange={(e) =>
-                                        header.column.setFilterValue(
-                                          (old: DateRange) => ({
-                                            ...old,
-                                            startYear: e.target.value,
-                                          })
-                                        )
-                                      }
+                                      onChange={(e) => {
+                                        const currentValue =
+                                          (header.column.getFilterValue() as DateRange) ||
+                                          {};
+                                        const newValue = {
+                                          ...currentValue,
+                                          startYear: e.target.value,
+                                        };
+                                        updateFilterValue(
+                                          header.column.id,
+                                          newValue
+                                        );
+                                      }}
                                       displayEmpty
                                       sx={{ fontSize: "0.8rem" }}
                                     >
@@ -713,14 +772,19 @@ export function StudentTable() {
                                           header.column.getFilterValue() as DateRange
                                         )?.startMonth ?? ""
                                       }
-                                      onChange={(e) =>
-                                        header.column.setFilterValue(
-                                          (old: DateRange) => ({
-                                            ...old,
-                                            startMonth: e.target.value,
-                                          })
-                                        )
-                                      }
+                                      onChange={(e) => {
+                                        const currentValue =
+                                          (header.column.getFilterValue() as DateRange) ||
+                                          {};
+                                        const newValue = {
+                                          ...currentValue,
+                                          startMonth: e.target.value,
+                                        };
+                                        updateFilterValue(
+                                          header.column.id,
+                                          newValue
+                                        );
+                                      }}
                                       displayEmpty
                                       sx={{ fontSize: "0.8rem" }}
                                     >
@@ -747,14 +811,19 @@ export function StudentTable() {
                                           header.column.getFilterValue() as DateRange
                                         )?.endYear ?? ""
                                       }
-                                      onChange={(e) =>
-                                        header.column.setFilterValue(
-                                          (old: DateRange) => ({
-                                            ...old,
-                                            endYear: e.target.value,
-                                          })
-                                        )
-                                      }
+                                      onChange={(e) => {
+                                        const currentValue =
+                                          (header.column.getFilterValue() as DateRange) ||
+                                          {};
+                                        const newValue = {
+                                          ...currentValue,
+                                          endYear: e.target.value,
+                                        };
+                                        updateFilterValue(
+                                          header.column.id,
+                                          newValue
+                                        );
+                                      }}
                                       displayEmpty
                                       sx={{ fontSize: "0.8rem" }}
                                     >
@@ -782,14 +851,19 @@ export function StudentTable() {
                                           header.column.getFilterValue() as DateRange
                                         )?.endMonth ?? ""
                                       }
-                                      onChange={(e) =>
-                                        header.column.setFilterValue(
-                                          (old: DateRange) => ({
-                                            ...old,
-                                            endMonth: e.target.value,
-                                          })
-                                        )
-                                      }
+                                      onChange={(e) => {
+                                        const currentValue =
+                                          (header.column.getFilterValue() as DateRange) ||
+                                          {};
+                                        const newValue = {
+                                          ...currentValue,
+                                          endMonth: e.target.value,
+                                        };
+                                        updateFilterValue(
+                                          header.column.id,
+                                          newValue
+                                        );
+                                      }}
                                       displayEmpty
                                       sx={{ fontSize: "0.8rem" }}
                                     >
@@ -821,9 +895,12 @@ export function StudentTable() {
                                   (header.column.getFilterValue() as string) ??
                                   ""
                                 }
-                                onChange={(e) =>
-                                  header.column.setFilterValue(e.target.value)
-                                }
+                                onChange={(e) => {
+                                  updateFilterValue(
+                                    header.column.id,
+                                    e.target.value
+                                  );
+                                }}
                                 displayEmpty
                                 sx={{ fontSize: "0.8rem" }}
                               >
@@ -846,9 +923,12 @@ export function StudentTable() {
                             >
                               <Select
                                 value={header.column.getFilterValue() ?? ""}
-                                onChange={(e) =>
-                                  header.column.setFilterValue(e.target.value)
-                                }
+                                onChange={(e) => {
+                                  updateFilterValue(
+                                    header.column.id,
+                                    e.target.value
+                                  );
+                                }}
                                 displayEmpty
                                 sx={{ fontSize: "0.8rem" }}
                               >
@@ -972,7 +1052,8 @@ export function StudentTable() {
                                                 (v) => v !== value
                                               )
                                             : [...currentFilters, value];
-                                        header.column.setFilterValue(
+                                        updateFilterValue(
+                                          header.column.id,
                                           newFilters
                                         );
                                       }}
