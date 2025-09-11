@@ -545,7 +545,7 @@ export function StudentTable() {
       setColumnFilters(initialFilters);
       setIsInitialized(true);
     }
-  }, []); // 依存関係を空にして初回のみ実行
+  }, [isInitialized]); // isInitializedのみを依存関係に
 
   useEffect(() => {
     fetch("/students.json")

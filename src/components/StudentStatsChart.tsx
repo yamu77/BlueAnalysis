@@ -113,8 +113,20 @@ export function StudentStatsChart({ students }: Props) {
   const updateUrlParams = useCallback(
     (column: keyof Student, countDuplicates: boolean) => {
       const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set("graph", column);
-      newSearchParams.set("duplicates", countDuplicates.toString());
+
+      // デフォルト値の場合はパラメータを削除
+      if (column === "レア") {
+        newSearchParams.delete("graph");
+      } else {
+        newSearchParams.set("graph", column);
+      }
+
+      if (countDuplicates === true) {
+        newSearchParams.delete("duplicates");
+      } else {
+        newSearchParams.set("duplicates", countDuplicates.toString());
+      }
+
       setSearchParams(newSearchParams);
     },
     [searchParams, setSearchParams]
