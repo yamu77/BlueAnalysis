@@ -45,13 +45,13 @@ interface DateRange {
 }
 
 const multiSelectFilterFn = (
-  row: any,
+  row: { getValue: (columnId: string) => unknown },
   columnId: string,
   filterValue: string[]
 ) => {
   if (!filterValue || filterValue.length === 0) return true;
   const value = row.getValue(columnId);
-  return filterValue.includes(value);
+  return filterValue.includes(String(value));
 };
 
 const visibilityInit = {
@@ -123,21 +123,63 @@ export function StudentTable() {
 
   // URLパラメータを更新する関数
   const updateUrlParams = useCallback(
-    (visibility: VisibilityState) => {
+    (visibility: VisibilityState, filters?: ColumnFiltersState) => {
       const visibleColumns = Object.entries(visibility)
-        .filter(([_, isVisible]) => isVisible)
+        .filter(([, isVisible]) => isVisible)
         .map(([column]) => column);
 
       const newSearchParams = new URLSearchParams(searchParams);
+
+      // 表示カラムの設定
       if (visibleColumns.length > 0) {
         newSearchParams.set("view_columns", visibleColumns.join(","));
       } else {
         newSearchParams.delete("view_columns");
       }
+
+      // フィルターの設定
+      if (filters && filters.length > 0) {
+        const filterObj: { [key: string]: unknown } = {};
+        filters.forEach((filter) => {
+          if (
+            filter.value !== undefined &&
+            filter.value !== null &&
+            filter.value !== ""
+          ) {
+            filterObj[filter.id] = filter.value;
+          }
+        });
+        if (Object.keys(filterObj).length > 0) {
+          newSearchParams.set("filters", JSON.stringify(filterObj));
+        } else {
+          newSearchParams.delete("filters");
+        }
+      } else {
+        newSearchParams.delete("filters");
+      }
+
       setSearchParams(newSearchParams);
     },
     [searchParams, setSearchParams]
   );
+
+  // URLパラメータからフィルターの設定を取得
+  const getInitialFilters = useCallback((): ColumnFiltersState => {
+    const filtersParam = searchParams.get("filters");
+    if (filtersParam) {
+      try {
+        const filterObj = JSON.parse(filtersParam);
+        return Object.entries(filterObj).map(([id, value]) => ({
+          id,
+          value,
+        }));
+      } catch (error) {
+        console.error("フィルターパラメータの解析エラー:", error);
+        return [];
+      }
+    }
+    return [];
+  }, [searchParams]);
 
   const columnHelper = createColumnHelper<Student>();
 
@@ -415,12 +457,17 @@ export function StudentTable() {
       columnVisibility,
     },
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: (updater) => {
+      const newFilters =
+        typeof updater === "function" ? updater(columnFilters) : updater;
+      setColumnFilters(newFilters);
+      updateUrlParams(columnVisibility, newFilters);
+    },
     onColumnVisibilityChange: (updater) => {
       const newVisibility =
         typeof updater === "function" ? updater(columnVisibility) : updater;
       setColumnVisibility(newVisibility);
-      updateUrlParams(newVisibility);
+      updateUrlParams(newVisibility, columnFilters);
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -454,6 +501,12 @@ export function StudentTable() {
     setColumnVisibility(initialVisibility);
   }, [getInitialColumnVisibility]);
 
+  // URLパラメータからフィルターの設定を初期化
+  useEffect(() => {
+    const initialFilters = getInitialFilters();
+    setColumnFilters(initialFilters);
+  }, [getInitialFilters]);
+
   useEffect(() => {
     fetch("/students.json")
       .then((response) => response.json())
@@ -482,6 +535,7 @@ export function StudentTable() {
 
   const clearAllFilters = () => {
     table.resetColumnFilters();
+    updateUrlParams(columnVisibility, []);
   };
 
   const [openFilters, setOpenFilters] = useState<{ [key: string]: boolean }>(
