@@ -116,8 +116,16 @@ export function StudentTable() {
 
         const newSearchParams = new URLSearchParams(prevSearchParams);
 
-        // 表示カラムの設定
-        if (visibleColumns.length > 0) {
+        // 表示カラムの設定（初期値と異なる場合のみ）
+        const defaultVisibleColumns = Object.entries(visibilityInit)
+          .filter(([, isVisible]) => isVisible)
+          .map(([column]) => column);
+
+        const isDefaultVisibility =
+          visibleColumns.length === defaultVisibleColumns.length &&
+          visibleColumns.every((col) => defaultVisibleColumns.includes(col));
+
+        if (!isDefaultVisibility && visibleColumns.length > 0) {
           newSearchParams.set("view_columns", visibleColumns.join(","));
         } else {
           newSearchParams.delete("view_columns");
