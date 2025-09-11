@@ -130,7 +130,9 @@ export function StudentTable() {
             if (
               filter.value !== undefined &&
               filter.value !== null &&
-              filter.value !== ""
+              filter.value !== "" &&
+              // 空の配列の場合は除外
+              !(Array.isArray(filter.value) && filter.value.length === 0)
             ) {
               filterObj[filter.id] = filter.value;
             }
