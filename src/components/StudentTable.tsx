@@ -105,11 +105,12 @@ export function StudentTable() {
 
   // URLパラメータを更新する関数（一方向のみ）
   const updateUrlParams = useCallback(
-    (visibility: VisibilityState, filters: ColumnFiltersState) => {
-      console.log("updateUrlParams呼び出し:", { visibility, filters });
+    (
+      visibility: VisibilityState,
+      filters: ColumnFiltersState,
+      sorting: SortingState
+    ) => {
       setSearchParams((prevSearchParams) => {
-        console.log("現在のURLパラメータ:", prevSearchParams.toString());
-
         const visibleColumns = Object.entries(visibility)
           .filter(([, isVisible]) => isVisible)
           .map(([column]) => column);
@@ -129,6 +130,19 @@ export function StudentTable() {
           newSearchParams.set("view_columns", visibleColumns.join(","));
         } else {
           newSearchParams.delete("view_columns");
+        }
+
+        // ソートの設定
+        if (sorting && sorting.length > 0) {
+          const sortString = sorting
+            .map((sort) => {
+              const direction = sort.desc ? "-" : "+";
+              return `${direction}${sort.id}`;
+            })
+            .join(",");
+          newSearchParams.set("sort", sortString);
+        } else {
+          newSearchParams.delete("sort");
         }
 
         // フィルターの設定（表示されているカラムのみ）
@@ -158,7 +172,6 @@ export function StudentTable() {
           newSearchParams.delete("filters");
         }
 
-        console.log("新しいURLパラメータ:", newSearchParams.toString());
         return newSearchParams;
       });
     },
@@ -467,13 +480,18 @@ export function StudentTable() {
   // URLパラメータから初期状態を設定（初回のみ）
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // フィルターまたは表示カラムが変更された時にURL更新
+  // フィルター、表示カラム、またはソートが変更された時にURL更新
   useEffect(() => {
     if (isInitialized) {
-      console.log("URL更新実行:", { columnVisibility, columnFilters });
-      updateUrlParams(columnVisibility, columnFilters);
+      updateUrlParams(columnVisibility, columnFilters, sorting);
     }
-  }, [columnVisibility, columnFilters, isInitialized]);
+  }, [
+    columnVisibility,
+    columnFilters,
+    sorting,
+    isInitialized,
+    updateUrlParams,
+  ]);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -507,6 +525,22 @@ export function StudentTable() {
         }
       }
       setColumnFilters(initialFilters);
+
+      // ソートの初期化
+      const sortParam = searchParams.get("sort");
+      let initialSorting: SortingState = [];
+      if (sortParam) {
+        try {
+          initialSorting = sortParam.split(",").map((sortStr) => {
+            const isDesc = sortStr.startsWith("-");
+            const columnId = sortStr.substring(1); // +または-を除去
+            return { id: columnId, desc: isDesc };
+          });
+        } catch (error) {
+          console.error("ソートパラメータの解析エラー:", error);
+        }
+      }
+      setSorting(initialSorting);
       setIsInitialized(true);
     }
   }, [isInitialized, searchParams]);
