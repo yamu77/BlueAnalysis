@@ -123,11 +123,15 @@ export function StudentTable() {
           newSearchParams.delete("view_columns");
         }
 
-        // フィルターの設定
+        // フィルターの設定（表示されているカラムのみ）
         if (filters && filters.length > 0) {
           const filterObj: { [key: string]: unknown } = {};
           filters.forEach((filter) => {
+            // 表示されているカラムのフィルターのみを保持
+            const isColumnVisible =
+              visibility[filter.id as keyof VisibilityState];
             if (
+              isColumnVisible &&
               filter.value !== undefined &&
               filter.value !== null &&
               filter.value !== "" &&
