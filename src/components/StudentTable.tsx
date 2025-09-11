@@ -103,102 +103,53 @@ export function StudentTable() {
   const [columnVisibility, setColumnVisibility] =
     useState<VisibilityState>(visibilityInit);
 
-  // URLパラメータから表示カラムの設定を取得
-  const getInitialColumnVisibility = useCallback((): VisibilityState => {
-    const viewColumnsParam = searchParams.get("view_columns");
-    if (viewColumnsParam) {
-      const visibleColumns = viewColumnsParam.split(",");
-      const newVisibility: VisibilityState = { ...visibilityInit };
-
-      // 指定されたカラムのみ表示
-      Object.keys(visibilityInit).forEach((key) => {
-        newVisibility[key as keyof VisibilityState] =
-          visibleColumns.includes(key);
-      });
-
-      return newVisibility;
-    }
-    return visibilityInit;
-  }, [searchParams]);
-
-  // URLパラメータを更新する関数
+  // URLパラメータを更新する関数（一方向のみ）
   const updateUrlParams = useCallback(
-    (visibility: VisibilityState, filters?: ColumnFiltersState) => {
-      const visibleColumns = Object.entries(visibility)
-        .filter(([, isVisible]) => isVisible)
-        .map(([column]) => column);
+    (visibility: VisibilityState, filters: ColumnFiltersState) => {
+      console.log("updateUrlParams呼び出し:", { visibility, filters });
+      setSearchParams((prevSearchParams) => {
+        console.log("現在のURLパラメータ:", prevSearchParams.toString());
 
-      const newSearchParams = new URLSearchParams(searchParams);
-      let hasChanges = false;
+        const visibleColumns = Object.entries(visibility)
+          .filter(([, isVisible]) => isVisible)
+          .map(([column]) => column);
 
-      // 表示カラムの設定
-      const currentViewColumns = searchParams.get("view_columns");
-      const newViewColumns =
-        visibleColumns.length > 0 ? visibleColumns.join(",") : null;
+        const newSearchParams = new URLSearchParams(prevSearchParams);
 
-      if (currentViewColumns !== newViewColumns) {
-        if (newViewColumns) {
-          newSearchParams.set("view_columns", newViewColumns);
+        // 表示カラムの設定
+        if (visibleColumns.length > 0) {
+          newSearchParams.set("view_columns", visibleColumns.join(","));
         } else {
           newSearchParams.delete("view_columns");
         }
-        hasChanges = true;
-      }
 
-      // フィルターの設定
-      const currentFilters = searchParams.get("filters");
-      let newFilters = null;
-
-      if (filters && filters.length > 0) {
-        const filterObj: { [key: string]: unknown } = {};
-        filters.forEach((filter) => {
-          if (
-            filter.value !== undefined &&
-            filter.value !== null &&
-            filter.value !== ""
-          ) {
-            filterObj[filter.id] = filter.value;
+        // フィルターの設定
+        if (filters && filters.length > 0) {
+          const filterObj: { [key: string]: unknown } = {};
+          filters.forEach((filter) => {
+            if (
+              filter.value !== undefined &&
+              filter.value !== null &&
+              filter.value !== ""
+            ) {
+              filterObj[filter.id] = filter.value;
+            }
+          });
+          if (Object.keys(filterObj).length > 0) {
+            newSearchParams.set("filters", JSON.stringify(filterObj));
+          } else {
+            newSearchParams.delete("filters");
           }
-        });
-        if (Object.keys(filterObj).length > 0) {
-          newFilters = JSON.stringify(filterObj);
-        }
-      }
-
-      if (currentFilters !== newFilters) {
-        if (newFilters) {
-          newSearchParams.set("filters", newFilters);
         } else {
           newSearchParams.delete("filters");
         }
-        hasChanges = true;
-      }
 
-      // 変更があった場合のみURLを更新
-      if (hasChanges) {
-        setSearchParams(newSearchParams);
-      }
+        console.log("新しいURLパラメータ:", newSearchParams.toString());
+        return newSearchParams;
+      });
     },
-    [searchParams, setSearchParams]
+    [setSearchParams]
   );
-
-  // URLパラメータからフィルターの設定を取得
-  const getInitialFilters = useCallback((): ColumnFiltersState => {
-    const filtersParam = searchParams.get("filters");
-    if (filtersParam) {
-      try {
-        const filterObj = JSON.parse(filtersParam);
-        return Object.entries(filterObj).map(([id, value]) => ({
-          id,
-          value,
-        }));
-      } catch (error) {
-        console.error("フィルターパラメータの解析エラー:", error);
-        return [];
-      }
-    }
-    return [];
-  }, [searchParams]);
 
   const columnHelper = createColumnHelper<Student>();
 
@@ -477,15 +428,7 @@ export function StudentTable() {
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: (updater) => {
-      const newVisibility =
-        typeof updater === "function" ? updater(columnVisibility) : updater;
-      setColumnVisibility(newVisibility);
-      // 表示カラム更新時はフィルターの状態を取得してからURL更新
-      setTimeout(() => {
-        updateUrlParams(newVisibility, columnFilters);
-      }, 0);
-    },
+    onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -500,35 +443,42 @@ export function StudentTable() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
-  const getVisibleColumns = useCallback(() => {
-    if (isMobile) {
-      setColumnVisibility(visibilityInit);
-    } else if (isTablet) {
+  // レスポンシブ対応の表示カラム設定
+  useEffect(() => {
+    if (isMobile || isTablet) {
       setColumnVisibility(visibilityInit);
     }
   }, [isMobile, isTablet]);
 
-  useEffect(() => {
-    getVisibleColumns();
-  }, [getVisibleColumns]);
-
-  // URLパラメータから表示カラムの設定を初期化（初回のみ）
+  // URLパラメータから初期状態を設定（初回のみ）
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // フィルターまたは表示カラムが変更された時にURL更新
+  useEffect(() => {
+    if (isInitialized) {
+      console.log("URL更新実行:", { columnVisibility, columnFilters });
+      updateUrlParams(columnVisibility, columnFilters);
+    }
+  }, [columnVisibility, columnFilters, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized) {
+      // 表示カラムの初期化
       const viewColumnsParam = searchParams.get("view_columns");
       let initialVisibility = visibilityInit;
       if (viewColumnsParam) {
         const visibleColumns = viewColumnsParam.split(",");
         initialVisibility = { ...visibilityInit };
-        Object.keys(visibilityInit).forEach((key) => {
-          initialVisibility[key as keyof VisibilityState] =
-            visibleColumns.includes(key);
-        });
+        for (const key in visibilityInit) {
+          if (Object.prototype.hasOwnProperty.call(visibilityInit, key)) {
+            (initialVisibility as Record<string, boolean>)[key] =
+              visibleColumns.includes(key);
+          }
+        }
       }
       setColumnVisibility(initialVisibility);
 
+      // フィルターの初期化
       const filtersParam = searchParams.get("filters");
       let initialFilters: ColumnFiltersState = [];
       if (filtersParam) {
@@ -545,7 +495,7 @@ export function StudentTable() {
       setColumnFilters(initialFilters);
       setIsInitialized(true);
     }
-  }, [isInitialized]); // isInitializedのみを依存関係に
+  }, [isInitialized, searchParams]);
 
   useEffect(() => {
     fetch("/students.json")
@@ -574,9 +524,8 @@ export function StudentTable() {
   };
 
   const clearAllFilters = () => {
-    table.resetColumnFilters();
+    // フィルターをリセット
     setColumnFilters([]);
-    updateUrlParams(columnVisibility, []);
   };
 
   const [openFilters, setOpenFilters] = useState<{ [key: string]: boolean }>(
@@ -590,17 +539,13 @@ export function StudentTable() {
     }));
   };
 
-  // フィルター値を更新してURLパラメータも同期する関数
+  // フィルター値を更新する関数
   const updateFilterValue = (columnId: string, value: unknown) => {
     const newFilters = columnFilters.filter((f) => f.id !== columnId);
     if (value !== undefined && value !== null && value !== "") {
       newFilters.push({ id: columnId, value });
     }
     setColumnFilters(newFilters);
-    // フィルター更新時は表示カラムの状態を取得してからURL更新
-    setTimeout(() => {
-      updateUrlParams(columnVisibility, newFilters);
-    }, 0);
   };
 
   if (error) return <div>{error}</div>;

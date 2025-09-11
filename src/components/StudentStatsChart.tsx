@@ -112,29 +112,33 @@ export function StudentStatsChart({ students }: Props) {
   // URLパラメータを更新する関数
   const updateUrlParams = useCallback(
     (column: keyof Student, countDuplicates: boolean) => {
-      const newSearchParams = new URLSearchParams(searchParams);
+      setSearchParams((prevSearchParams) => {
+        const newSearchParams = new URLSearchParams(prevSearchParams);
 
-      // デフォルト値の場合はパラメータを削除
-      if (column === "レア") {
-        newSearchParams.delete("graph");
-      } else {
-        newSearchParams.set("graph", column);
-      }
+        // デフォルト値の場合はパラメータを削除
+        if (column === "レア") {
+          newSearchParams.delete("graph");
+        } else {
+          newSearchParams.set("graph", column);
+        }
 
-      if (countDuplicates === true) {
-        newSearchParams.delete("duplicates");
-      } else {
-        newSearchParams.set("duplicates", countDuplicates.toString());
-      }
+        if (countDuplicates === true) {
+          newSearchParams.delete("duplicates");
+        } else {
+          newSearchParams.set("duplicates", countDuplicates.toString());
+        }
 
-      setSearchParams(newSearchParams);
+        return newSearchParams;
+      });
     },
-    [searchParams, setSearchParams]
+    [setSearchParams]
   );
 
-  // コンポーネントの初期化時にURLパラメータを設定
+  // コンポーネントの初期化時にURLパラメータを設定（初回のみ）
+  const [isChartInitialized, setIsChartInitialized] = useState(false);
+
   useEffect(() => {
-    if (students.length > 0) {
+    if (students.length > 0 && !isChartInitialized) {
       const initialColumn = getInitialColumn();
       const initialDuplicates = getInitialCountDuplicates();
       setSelectedColumn(initialColumn);
@@ -142,9 +146,17 @@ export function StudentStatsChart({ students }: Props) {
         ...prev,
         countDuplicates: initialDuplicates,
       }));
+      // 初回のみURL更新
       updateUrlParams(initialColumn, initialDuplicates);
+      setIsChartInitialized(true);
     }
-  }, [students, getInitialColumn, getInitialCountDuplicates, updateUrlParams]);
+  }, [
+    students,
+    getInitialColumn,
+    getInitialCountDuplicates,
+    updateUrlParams,
+    isChartInitialized,
+  ]);
 
   // データが空の場合の処理を追加
   if (!students || students.length === 0) {
