@@ -10,6 +10,7 @@ import {
   ColumnFiltersState,
   VisibilityState,
 } from "@tanstack/react-table";
+import { useSearchParams } from "react-router-dom";
 import {
   Select,
   MenuItem,
@@ -93,6 +94,7 @@ const visibilityInit = {
 };
 
 export function StudentTable() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -100,6 +102,42 @@ export function StudentTable() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] =
     useState<VisibilityState>(visibilityInit);
+
+  // URLパラメータから表示カラムの設定を取得
+  const getInitialColumnVisibility = useCallback((): VisibilityState => {
+    const viewColumnsParam = searchParams.get("view_columns");
+    if (viewColumnsParam) {
+      const visibleColumns = viewColumnsParam.split(",");
+      const newVisibility: VisibilityState = { ...visibilityInit };
+
+      // 指定されたカラムのみ表示
+      Object.keys(visibilityInit).forEach((key) => {
+        newVisibility[key as keyof VisibilityState] =
+          visibleColumns.includes(key);
+      });
+
+      return newVisibility;
+    }
+    return visibilityInit;
+  }, [searchParams]);
+
+  // URLパラメータを更新する関数
+  const updateUrlParams = useCallback(
+    (visibility: VisibilityState) => {
+      const visibleColumns = Object.entries(visibility)
+        .filter(([_, isVisible]) => isVisible)
+        .map(([column]) => column);
+
+      const newSearchParams = new URLSearchParams(searchParams);
+      if (visibleColumns.length > 0) {
+        newSearchParams.set("view_columns", visibleColumns.join(","));
+      } else {
+        newSearchParams.delete("view_columns");
+      }
+      setSearchParams(newSearchParams);
+    },
+    [searchParams, setSearchParams]
+  );
 
   const columnHelper = createColumnHelper<Student>();
 
@@ -378,7 +416,12 @@ export function StudentTable() {
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
+    onColumnVisibilityChange: (updater) => {
+      const newVisibility =
+        typeof updater === "function" ? updater(columnVisibility) : updater;
+      setColumnVisibility(newVisibility);
+      updateUrlParams(newVisibility);
+    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -404,6 +447,12 @@ export function StudentTable() {
   useEffect(() => {
     getVisibleColumns();
   }, [getVisibleColumns]);
+
+  // URLパラメータから表示カラムの設定を初期化
+  useEffect(() => {
+    const initialVisibility = getInitialColumnVisibility();
+    setColumnVisibility(initialVisibility);
+  }, [getInitialColumnVisibility]);
 
   useEffect(() => {
     fetch("/students.json")
