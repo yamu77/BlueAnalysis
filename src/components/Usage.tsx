@@ -9,6 +9,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "./Usage.css";
 
 export function Usage() {
@@ -208,12 +209,221 @@ export function Usage() {
 
       <section>
         <Typography variant="h5" gutterBottom>
+          クエリパラメータについて
+        </Typography>
+        <Typography>
+          現在の表示設定やフィルター状態はURLに保存されるため、ブックマークや共有が可能です。
+        </Typography>
+
+        <Accordion sx={{ mt: 2 }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              クエリパラメータの詳細仕様
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails sx={{ pt: 3 }}>
+            <List sx={{ pl: 2 }}>
+              <ListItem sx={{ alignItems: "flex-start" }}>
+                <ListItemText
+                  primary={
+                    <Typography
+                      variant="subtitle1"
+                      component="span"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      view_columns
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography component="div">
+                      表示するカラムを指定します。カンマ区切りで列名を指定。
+                      <br />
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontFamily: "monospace",
+                          backgroundColor: "rgba(0, 0, 0, 0.05)",
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          display: "inline-block",
+                          mt: 1,
+                        }}
+                      >
+                        view_columns=名前,クラス,学校
+                      </Typography>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+
+              <ListItem sx={{ alignItems: "flex-start" }}>
+                <ListItemText
+                  primary={
+                    <Typography
+                      variant="subtitle1"
+                      component="span"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      filters
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography component="div">
+                      フィルター条件をJSON形式で指定します。
+                      <br />
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontFamily: "monospace",
+                          backgroundColor: "rgba(0, 0, 0, 0.05)",
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          display: "inline-block",
+                          mt: 1,
+                        }}
+                      >
+                        filters=
+                        {JSON.stringify({
+                          クラス: ["1年生"],
+                          学校: ["千年科学学園"],
+                        })}
+                      </Typography>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+
+              <ListItem sx={{ alignItems: "flex-start" }}>
+                <ListItemText
+                  primary={
+                    <Typography
+                      variant="subtitle1"
+                      component="span"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      sort
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography component="div">
+                      ソート条件を指定します。+で昇順、-で降順。複数指定時はカンマ区切り。
+                      <br />
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontFamily: "monospace",
+                          backgroundColor: "rgba(0, 0, 0, 0.05)",
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          display: "inline-block",
+                          mt: 1,
+                        }}
+                      >
+                        sort=+名前,-レア
+                      </Typography>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+
+              <ListItem sx={{ alignItems: "flex-start" }}>
+                <ListItemText
+                  primary={
+                    <Typography
+                      variant="subtitle1"
+                      component="span"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      graph
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography component="div">
+                      グラフの表示項目を指定します。
+                      <br />
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontFamily: "monospace",
+                          backgroundColor: "rgba(0, 0, 0, 0.05)",
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          display: "inline-block",
+                          mt: 1,
+                        }}
+                      >
+                        graph=クラス
+                      </Typography>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+
+              <ListItem sx={{ alignItems: "flex-start" }}>
+                <ListItemText
+                  primary={
+                    <Typography
+                      variant="subtitle1"
+                      component="span"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      duplicates
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography component="div">
+                      重複カウントの設定。falseで重複を除外。
+                      <br />
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontFamily: "monospace",
+                          backgroundColor: "rgba(0, 0, 0, 0.05)",
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          display: "inline-block",
+                          mt: 1,
+                        }}
+                      >
+                        duplicates=false
+                      </Typography>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            </List>
+
+            <Typography
+              variant="body2"
+              sx={{
+                mt: 3,
+                p: 2,
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+                borderRadius: 1,
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <strong>注意:</strong>{" "}
+              デフォルト値の場合はパラメータは省略されます。
+              表示されていないカラムのフィルター情報は自動的に削除されます。
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+      </section>
+
+      <section>
+        <Typography variant="h5" gutterBottom>
           データについて
         </Typography>
         <Typography>
           データは手動で更新しているので実装から反映までラグがあります。
           <br />
-          最新の更新日: 2025/07/24 イチカ（水着）、セイア（水着）まで
+          最新の更新日: 2025/09/11 ミサキ（水着）まで
         </Typography>
       </section>
 
