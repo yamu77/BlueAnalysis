@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   BarChart,
   Bar,
@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import type { Student } from "../types/Student";
 import { useTheme } from "@mui/material/styles";
+import { useSearchParams } from "react-router-dom";
 
 interface Props {
   students: Student[];
@@ -46,7 +47,7 @@ const UNIQUE_COUNT_FIELDS = [
 type UniqueCountField = (typeof UNIQUE_COUNT_FIELDS)[number];
 
 // 集計から除外する項目を定義
-const EXCLUDED_FIELDS = [
+const EXCLUDED_FIELDS: (keyof Student)[] = [
   "名前",
   "HP",
   "会心ダメージ",
@@ -61,7 +62,7 @@ const EXCLUDED_FIELDS = [
   "命中値",
   "安定値",
   "防御貫通値",
-] as const;
+];
 
 // 生徒の重複を除外する
 const getUniqueStudents = (students: Student[]): Student[] => {
@@ -86,11 +87,52 @@ const getUniqueStudents = (students: Student[]): Student[] => {
 
 export function StudentStatsChart({ students }: Props) {
   const theme = useTheme();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // URLパラメータから初期値を取得
+  const getInitialColumn = useCallback((): keyof Student => {
+    const graphParam = searchParams.get("graph");
+    if (graphParam && Object.keys(students[0] || {}).includes(graphParam)) {
+      return graphParam as keyof Student;
+    }
+    return "レア";
+  }, [searchParams, students]);
+
+  const getInitialCountDuplicates = useCallback((): boolean => {
+    const duplicatesParam = searchParams.get("duplicates");
+    return duplicatesParam !== "false"; // デフォルトはtrue
+  }, [searchParams]);
+
   const [selectedColumn, setSelectedColumn] = useState<keyof Student>("レア");
   const [chartOptions, setChartOptions] = useState<ChartOptions>({
     implementationDateUnit: "年",
     countDuplicates: true,
   });
+
+  // URLパラメータを更新する関数
+  const updateUrlParams = useCallback(
+    (column: keyof Student, countDuplicates: boolean) => {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set("graph", column);
+      newSearchParams.set("duplicates", countDuplicates.toString());
+      setSearchParams(newSearchParams);
+    },
+    [searchParams, setSearchParams]
+  );
+
+  // コンポーネントの初期化時にURLパラメータを設定
+  useEffect(() => {
+    if (students.length > 0) {
+      const initialColumn = getInitialColumn();
+      const initialDuplicates = getInitialCountDuplicates();
+      setSelectedColumn(initialColumn);
+      setChartOptions((prev) => ({
+        ...prev,
+        countDuplicates: initialDuplicates,
+      }));
+      updateUrlParams(initialColumn, initialDuplicates);
+    }
+  }, [students, getInitialColumn, getInitialCountDuplicates, updateUrlParams]);
 
   // データが空の場合の処理を追加
   if (!students || students.length === 0) {
@@ -114,7 +156,7 @@ export function StudentStatsChart({ students }: Props) {
 
   // 名前以外の全てのカラムを取得し、除外項目をフィルタリング
   const columns = Object.keys(students[0]).filter(
-    (key) => !EXCLUDED_FIELDS.includes(key as any)
+    (key) => !EXCLUDED_FIELDS.includes(key as keyof Student)
   );
 
   const getChartData = (column: keyof Student): DataCount[] => {
@@ -264,7 +306,11 @@ export function StudentStatsChart({ students }: Props) {
         <FormControl sx={{ minWidth: 140, marginLeft: "10px" }}>
           <Select
             value={selectedColumn}
-            onChange={(e) => setSelectedColumn(e.target.value as keyof Student)}
+            onChange={(e) => {
+              const newColumn = e.target.value as keyof Student;
+              setSelectedColumn(newColumn);
+              updateUrlParams(newColumn, chartOptions.countDuplicates);
+            }}
             size="small"
           >
             {columns.map((column) => (
@@ -280,12 +326,14 @@ export function StudentStatsChart({ students }: Props) {
           <FormControl size="small">
             <Select
               value={chartOptions.implementationDateUnit}
-              onChange={(e) =>
+              onChange={(e) => {
+                const newUnit = e.target.value as "年" | "年月";
                 setChartOptions((prev) => ({
                   ...prev,
-                  implementationDateUnit: e.target.value as "年" | "年月",
-                }))
-              }
+                  implementationDateUnit: newUnit,
+                }));
+                // 実装日の単位はURLパラメータに含めない（グラフの表示項目と別衣装生徒の設定のみ）
+              }}
             >
               <MenuItem value="年">年単位</MenuItem>
               <MenuItem value="年月">年月単位</MenuItem>
@@ -302,12 +350,14 @@ export function StudentStatsChart({ students }: Props) {
                   type="radio"
                   value="true"
                   checked={chartOptions.countDuplicates}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const newCountDuplicates = e.target.value === "true";
                     setChartOptions((prev) => ({
                       ...prev,
-                      countDuplicates: e.target.value === "true",
-                    }))
-                  }
+                      countDuplicates: newCountDuplicates,
+                    }));
+                    updateUrlParams(selectedColumn, newCountDuplicates);
+                  }}
                 />
                 別衣装生徒含む
               </label>
@@ -316,12 +366,14 @@ export function StudentStatsChart({ students }: Props) {
                   type="radio"
                   value="false"
                   checked={!chartOptions.countDuplicates}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const newCountDuplicates = e.target.value === "true";
                     setChartOptions((prev) => ({
                       ...prev,
-                      countDuplicates: e.target.value === "true",
-                    }))
-                  }
+                      countDuplicates: newCountDuplicates,
+                    }));
+                    updateUrlParams(selectedColumn, newCountDuplicates);
+                  }}
                 />
                 含まない
               </label>
