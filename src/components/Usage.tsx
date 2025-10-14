@@ -423,7 +423,7 @@ export function Usage() {
         <Typography>
           データは手動で更新しているので実装から反映までラグがあります。
           <br />
-          最新の更新日: 2025/09/11 ミサキ（水着）まで
+          最新の更新日: 2025/10/14 リツまで
         </Typography>
       </section>
 
