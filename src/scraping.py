@@ -22,7 +22,7 @@ def get_student_list() -> pd.DataFrame:
     df = df.dropna(subset=["名前"])
     df.columns = df.columns.str.replace(" ", "")
     df = df.apply(lambda x: x.str.replace(" ", "") if x.dtype == "object" else x)
-    df = df.drop(["画像", "募集", "追加"], axis=1)
+    df = df.drop(["__画像__", "募集", "追加"], axis=1)
 
     return df
 
@@ -112,16 +112,20 @@ def get_student_profile_for_playwright(url, switch=False) -> dict:
         return profile, table
 
 
-def convert_grade(grade: str, age: str):
+def convert_grade(grade: str, age: str) -> str:
     num_match = re.search(r"(\d+)", grade)
+
     if num_match:
         return f"{num_match.group(1)}年"
     else:
-        if int(age.replace("歳", "")) >= 18:
+        age_numeric = age.replace("歳", "")
+        if "○" in age_numeric:
+            return "不明"
+        elif int(age_numeric) >= 18:
             return "3年(推定)"
-        elif int(age.replace("歳", "")) >= 17:
+        elif int(age_numeric) >= 17:
             return "2年(推定)"
-        elif int(age.replace("歳", "")) <= 16:
+        elif int(age_numeric) <= 16:
             return "1年(推定)"
         else:
             return grade
@@ -222,18 +226,21 @@ df = pd.merge(df_student_list, df_student_appearance, on="名前", how="left")
 student_list = list(df["名前"].values)
 df_student_profile = pd.DataFrame()
 # 切り替え生徒用スイッチ
-switch_student = False
+SWITCH_STUDENT = False
 for student in tqdm(student_list):
     try:
         df_student_profile = pd.concat(
-            [df_student_profile, get_student_profile(student, switch_student)], axis=0
+            [df_student_profile, get_student_profile(student, SWITCH_STUDENT)], axis=0
         )
         # 切り替え生徒の場合切り替える
         if student == HOSHINO:
-            switch_student = not switch_student
+            SWITCH_STUDENT = not SWITCH_STUDENT
         time.sleep(1)
     except Exception as e:
         raise f"Error from {student}: {e}"
+df_student_profile.to_csv(
+    "public/students_profile_raw.csv", index=False, encoding="utf-8"
+)
 # インデックスのリセット
 df_student_profile.reset_index(drop=True, inplace=True)
 df.reset_index(drop=True, inplace=True)
