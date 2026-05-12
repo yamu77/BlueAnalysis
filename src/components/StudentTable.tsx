@@ -280,9 +280,9 @@ export function StudentTable() {
         header: "射程距離",
         filterFn: (row, _columnId, filterValue: string) => {
           if (!filterValue) return true;
-          const range = row.getValue("射程距離") as string;
-          if (!range) return false;
-          return filterValue == range;
+          const range = row.getValue("射程距離") as number;
+          if (range == null) return false;
+          return Number(filterValue) === range;
         },
       }),
       columnHelper.accessor("装備1", {

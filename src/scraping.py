@@ -263,6 +263,9 @@ df.rename(columns={"防御": "防御属性"}, inplace=True)
 # 名前でソート
 df = df.sort_values("名前")
 
+# 射程距離は整数として出力（to_json で 1000.0 にならないようにする）
+df["射程距離"] = pd.to_numeric(df["射程距離"], errors="coerce").astype("int64")
+
 # CSVファイルとして保存
 df.to_csv("public/students.csv", index=False, encoding="utf-8")
 
