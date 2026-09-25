@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 from tqdm import tqdm
 
-HOSHINO = "ホシノ（臨戦）"
+SWITCH_STUDENTS = {"ホシノ（臨戦）", "シュン（水着）"}
 
 
 def get_student_list() -> pd.DataFrame:
@@ -119,7 +119,7 @@ def convert_grade(grade: str, age: str) -> str:
         return f"{num_match.group(1)}年"
     else:
         age_numeric = age.replace("歳", "")
-        if "○" in age_numeric:
+        if not age_numeric.isdecimal():
             return "不明"
         elif int(age_numeric) >= 18:
             return "3年(推定)"
@@ -142,8 +142,8 @@ def get_student_profile(name: str, switch=False) -> pd.DataFrame:
     # urlパラメータの取得
     parm = url.split("?")[1]
     param_parsed = urllib.parse.unquote(parm)
-    # ホシノ臨戦（切り替え可能な生徒）の場合はplaywrightでスクレイピング
-    if param_parsed == HOSHINO:
+    # 切り替え可能な生徒の場合はplaywrightでスクレイピング
+    if param_parsed in SWITCH_STUDENTS:
         profile, table = get_student_profile_for_playwright(url, switch)
     else:
         profile = {
@@ -233,11 +233,11 @@ for student in tqdm(student_list):
             [df_student_profile, get_student_profile(student, SWITCH_STUDENT)], axis=0
         )
         # 切り替え生徒の場合切り替える
-        if student == HOSHINO:
+        if student in SWITCH_STUDENTS:
             SWITCH_STUDENT = not SWITCH_STUDENT
         time.sleep(1)
     except Exception as e:
-        raise f"Error from {student}: {e}"
+        raise RuntimeError(f"Error from {student}: {e}") from e
 df_student_profile.to_csv(
     "public/students_profile_raw.csv", index=False, encoding="utf-8"
 )
